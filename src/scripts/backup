@@ -1,0 +1,69 @@
+#!/bin/sh
+
+validEnvironment() {
+  [ "$1" = "development" ] || \
+  [ "$1" = "demo" ] || \
+  [ "$1" = "staging" ] || \
+  [ "$1" = "production" ] || \
+  [ "$1" = "local" ]
+}
+
+environment=$1
+if [ -z "$1" ]
+then
+  echo "Must supply an environment - e.g. make backup ENV=demo"
+  exit 1
+fi
+
+if ! validEnvironment $environment
+then
+  echo "Must supply a valid environment - e.g. ENV=demo"
+  exit 1
+fi
+
+server="nudj$environment"
+baseDir=$PWD
+localOutputDir="$baseDir/backups/$environment/$(date '+%F')"
+
+echo "Dumping $environment to $baseDir/$localOutputDir"
+mkdir -p $baseDir/$localOutputDir
+
+if [[ "$environment" = "demo" || "$environment" = "staging" || "$environment" = "production" ]]; then
+
+  echo "local: Syncing devops scripts to $environment"
+  rsync -az --delete -e "ssh" /usr/src/scripts/remote/ $server:/home/nudjtech/devops
+  exitCode=$?
+
+  if [ $exitCode = 0 ]
+  then
+    echo "local: Executing backup script on $environment"
+    ssh -t $server /bin/sh -c "'/home/nudjtech/devops/backup $environment'"
+    exitCode=$?
+  fi
+
+  if [ $exitCode = 0 ]
+  then
+    echo "local: Syncing backup data from $environment"
+    rsync -az --delete -e "ssh" $server:/home/nudjtech/dbbackup/ $baseDir/$localOutputDir
+  fi
+
+  if [ $exitCode = 0 ]
+  then
+    echo "local: Removing backup data from $environment"
+    ssh -t $server /bin/sh -c "'rm -rf /home/nudjtech/dbbackup'"
+  fi
+else
+  echo "local: Executing backup script locally"
+  $PWD/scripts/remote/backup
+  exitCode=$?
+fi
+
+if [ $exitCode = 0 ]
+then
+  echo "local: Restoring reasonable permissions on backup files"
+  chmod 0755 $localOutputDir
+  chmod -R 0600 $localOutputDir/*
+fi
+
+[[ $exitCode = 0 ]] && result="complete 👍" || result="failed 👎"
+echo "\nlocal: Backup of $environment to $localOutputDir $result"

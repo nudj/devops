@@ -1,0 +1,14 @@
+#!/bin/sh
+
+environment=$1
+dockerRun=${2:-'docker-compose run --rm'}
+devopsDir=${3:-'/home/nudjtech/devops'}
+outputDir=${4:-'/home/nudjtech/dbbackup'}
+
+cd $environment
+
+echo "$environment: Fetching db connection variables from envkey"
+dbEnvVars=$($dockerRun -v $devopsDir/api:/usr/src/devops api node /usr/src/devops/extract-envkeys DB_HOST DB_PORT DB_NAME DB_USER DB_PASS)
+
+echo "$environment: Executing backup script on db service"
+$dockerRun -v $devopsDir/db:/devops -v $outputDir:/dbdump $dbEnvVars db /devops/backup
