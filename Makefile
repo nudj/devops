@@ -2,14 +2,13 @@ IMAGE:=nudj/devops:latest
 CWD=$(shell pwd)
 SYNC ?= false
 
-.PHONY: build run backup
+.PHONY: build run backup migrate
 
 build:
 	@docker build -t $(IMAGE) .
 
 run:
 	@docker run -it --rm --name devops \
-		--net host \
 		-v /var/run/docker.sock:/var/run/docker.sock \
 		-v $(CWD)/.ssh:/root/.ssh \
 		-v $(CWD)/.zshrc:/root/.zshrc \
@@ -23,4 +22,12 @@ run:
 		$(IMAGE)
 
 backup:
-	@docker run --rm --name devops $(IMAGE) ./backup $(ENV)
+	@docker run --rm --name backup $(IMAGE) ./backup $(ENV)
+
+migrate:
+	@docker run --rm --name migrate \
+		--env-file $(CWD)/.env \
+		-v /var/run/docker.sock:/var/run/docker.sock \
+		-v $(CWD)/.ssh:/root/.ssh \
+		$(IMAGE) \
+		/bin/sh -c "./scripts/migrate $(ENV) $(TYPE)"

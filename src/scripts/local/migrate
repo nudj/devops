@@ -1,0 +1,6 @@
+#!/bin/sh
+
+direction=$1
+
+echo "local: Executing migrate script on api service"
+docker-compose -p nudj run --rm -e ENVKEY=$ENVKEY_API api /bin/sh -c "node_modules/.bin/knex migrate:$direction"
