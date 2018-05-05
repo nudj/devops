@@ -31,7 +31,7 @@ if [[ "$environment" = "development" || "$environment" = "staging" || "$environm
   if [ $exitCode = 0 ]
   then
     echo "local: Executing migrate script on $environment"
-    ssh -t $server /bin/sh -c "'/home/nudjtech/devops/migrate $environment $type'"
+    ssh -T $server /bin/sh -c "'/home/nudjtech/devops/migrate $environment $type'"
     exitCode=$?
   fi
 else
