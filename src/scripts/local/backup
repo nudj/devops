@@ -1,15 +1,10 @@
 #!/bin/sh
 
-environment=$1
-baseDir='/Users/nick/dev/nudj'
-dockerRun="docker-compose -p nudj -f $PWD/local/server/docker-compose.yml -f $PWD/local/web/docker-compose.yml -f $PWD/local/hire/docker-compose.yml -f $PWD/local/admin/docker-compose.yml -f $PWD/local/api/docker-compose.yml run --rm"
-devopsDir="$baseDir/devops/src/scripts/remote"
-outputDir="$baseDir/backups/$environment/$(date '+%F')"
+devopsDir="/Users/nick/dev/nudj/devops/src/scripts/remote"
+outputDir="/Users/nick/dev/nudj/backups/local/$(date '+%F')"
 
-cd $environment
+echo "local: Fetching db connection variables from envkey"
+dbEnvVars=$(docker-compose -p nudj run --rm -v $devopsDir/api:/usr/src/devops api node /usr/src/devops/extract-envkeys DB_HOST DB_PORT DB_NAME DB_USER DB_PASS)
 
-echo "$environment: Fetching db connection variables from envkey"
-dbEnvVars=$($dockerRun -v $devopsDir/api:/usr/src/devops api node /usr/src/devops/extract-envkeys DB_HOST DB_PORT DB_NAME DB_USER DB_PASS)
-
-echo "$environment: Executing backup script on db service"
-$dockerRun -v $devopsDir/db:/devops -v $outputDir:/dbdump $dbEnvVars db /devops/backup
+echo "local: Executing backup script on db service"
+docker-compose -p nudj run --rm -v $devopsDir/db:/devops -v $outputDir:/dbdump $dbEnvVars db /devops/backup

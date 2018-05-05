@@ -22,11 +22,17 @@ run:
 		$(IMAGE)
 
 backup:
-	@docker run --rm --name backup $(IMAGE) ./backup $(ENV)
+	@docker run --rm --name backup \
+		--env-file $(CWD)/../api/.env \
+		-v /var/run/docker.sock:/var/run/docker.sock \
+		-v $(CWD)/.ssh:/root/.ssh \
+		-v $(CWD)/../backups:/usr/src/backups \
+		$(IMAGE) \
+		/bin/sh -c "./scripts/backup $(ENV)"
 
 migrate:
 	@docker run --rm --name migrate \
-		--env-file $(CWD)/.env \
+		--env-file $(CWD)/../api/.env \
 		-v /var/run/docker.sock:/var/run/docker.sock \
 		-v $(CWD)/.ssh:/root/.ssh \
 		$(IMAGE) \
