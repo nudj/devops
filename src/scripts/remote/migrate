@@ -1,0 +1,8 @@
+#!/bin/sh
+
+environment=$1
+type=$2
+
+echo "$environment: Executing migrate script on api service\n"
+cd $environment
+docker-compose run --rm --no-deps api /bin/sh -c "node_modules/.bin/knex migrate:$type"

@@ -1,0 +1,8 @@
+#!/bin/sh
+
+echo "Backing up database $DB_NAME at http+tcp://$DB_HOST:$DB_PORT using user $DB_USER"
+arangodump --overwrite true --output-directory /dbdump --server.endpoint http+tcp://$DB_HOST:$DB_PORT --server.database $DB_NAME --server.username $DB_USER --server.password $DB_PASS
+
+echo "Relaxing permissions on dump files"
+# The files are owned by root so to remove the need for sudo permissions when rsyncing them back down we open the permissions up. These files will be deleted once the syncing is complete
+chmod -R 0777 /dbdump

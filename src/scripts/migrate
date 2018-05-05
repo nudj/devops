@@ -1,0 +1,44 @@
+#!/bin/sh
+
+validEnvironment() {
+  [ "$1" = "local" ] || \
+  [ "$1" = "development" ]
+}
+
+environment=$1
+if [ -z "$1" ]
+then
+  echo "Must supply an environment - e.g. ENV=local"
+  exit 1
+fi
+
+if ! validEnvironment $environment
+then
+  echo "Must supply a valid environment - local|development"
+  exit 1
+fi
+
+type=${2:-latest}
+server="nudj$environment"
+
+echo "Migration of type $type on $environment"
+
+if [[ "$environment" = "development" || "$environment" = "staging" || "$environment" = "demo" || "$environment" = "production" ]]; then
+  echo "local: Syncing devops scripts to $environment"
+  rsync -az --delete -e "ssh" $PWD/scripts/remote/ $server:/home/nudjtech/devops
+  exitCode=$?
+
+  if [ $exitCode = 0 ]
+  then
+    echo "local: Executing migrate script on $environment"
+    ssh -t $server /bin/sh -c "'/home/nudjtech/devops/migrate $environment $type'"
+    exitCode=$?
+  fi
+else
+  echo "local: Executing migration script locally"
+  $PWD/scripts/local/migrate $type
+  exitCode=$?
+fi
+
+[[ $exitCode = 0 ]] && result="complete 👍" || result="failed 👎"
+echo "local: Migration of type $type on $environment $result"
