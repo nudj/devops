@@ -1,6 +1,6 @@
 #!/bin/sh
 
-devopsDir="/Users/nick/dev/nudj/devops/src/scripts/remote"
+devopsDir="/Users/nick/dev/nudj/devops/src/tasks/remote"
 outputDir="/Users/nick/dev/nudj/backups/local/$(date '+%F')"
 
 echo "local: Fetching db connection variables from envkey"

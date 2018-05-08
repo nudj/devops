@@ -12,7 +12,7 @@ run:
 		-v /var/run/docker.sock:/var/run/docker.sock \
 		-v $(CWD)/.ssh:/root/.ssh \
 		-v $(CWD)/.zshrc:/root/.zshrc \
-		-v $(CWD)/src/scripts:/usr/src/scripts \
+		-v $(CWD)/src/tasks:/usr/src/tasks \
 		-v $(CWD)/../server:/usr/src/local/server \
 		-v $(CWD)/../web:/usr/src/local/web \
 		-v $(CWD)/../hire:/usr/src/local/hire \
@@ -28,7 +28,7 @@ backup:
 		-v $(CWD)/.ssh:/root/.ssh \
 		-v $(CWD)/../backups:/usr/src/backups \
 		$(IMAGE) \
-		/bin/sh -c "./scripts/backup $(ENV)"
+		/bin/sh -c "./tasks/backup $(ENV)"
 
 migrate:
 	@docker run --rm --name migrate \
@@ -36,4 +36,4 @@ migrate:
 		-v /var/run/docker.sock:/var/run/docker.sock \
 		-v $(CWD)/.ssh:/root/.ssh \
 		$(IMAGE) \
-		/bin/sh -c "./scripts/migrate $(ENV) $(TYPE)"
+		/bin/sh -c "./tasks/migrate $(ENV) $(TYPE)"

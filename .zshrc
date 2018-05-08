@@ -2,11 +2,11 @@ source /root/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 PROMPT='devops» '
 
-alias backup="zsh /usr/src/scripts/backup"
-alias deploy="zsh /usr/src/scripts/deploy"
-alias execute="zsh /usr/src/scripts/execute"
-alias migrate="zsh /usr/src/scripts/migrate"
-alias restore="zsh /usr/src/scripts/restore"
+alias backup="zsh /usr/src/tasks/backup"
+alias deploy="zsh /usr/src/tasks/deploy"
+alias execute="zsh /usr/src/tasks/execute"
+alias migrate="zsh /usr/src/tasks/migrate"
+alias restore="zsh /usr/src/tasks/restore"
 
 alias ll="ls -la"
 alias d="docker"
