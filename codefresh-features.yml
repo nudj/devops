@@ -1,0 +1,11 @@
+version: '1.0'
+
+steps:
+
+  build:
+    title: Build
+    type: build
+    image_name: nudj/devops
+    tag: test
+    working_directory: ${{main_clone}}
+    dockerfile: Dockerfile

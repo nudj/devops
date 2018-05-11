@@ -1,0 +1,8 @@
+#!/bin/sh
+
+environment=$1
+script=$2
+
+echo "$environment: Executing script on api service"
+cd $environment
+docker-compose run --rm --no-deps api /bin/sh -c "node /usr/src/scripts $script"
