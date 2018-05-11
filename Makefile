@@ -37,7 +37,7 @@ migrate:
 		-v $(PWD)/src/tasks:/usr/src/tasks \
 		-v $(PWD)/src/docker-compose.yml:/usr/src/docker-compose.yml \
 		$(IMAGE) \
-		/bin/sh -c "./tasks/migrate $(ENV) $(TYPE)"
+		/bin/sh -c "./tasks/migrate $(ENV) $(TARGET) $(TYPE)"
 
 execute:
 	@docker run --rm --name execute \
