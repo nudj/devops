@@ -24,8 +24,8 @@ server="nudj$environment"
 echo "Migration of type $type on $environment"
 
 if [[ "$environment" = "development" || "$environment" = "staging" || "$environment" = "demo" || "$environment" = "production" ]]; then
-  echo "local: Syncing devops scripts to $environment"
-  rsync -az --delete -e "ssh" $PWD/scripts/remote/ $server:/home/nudjtech/devops
+  echo "local: Syncing devops tasks to $environment"
+  rsync -az --delete -e "ssh" $PWD/tasks/remote/ $server:/home/nudjtech/devops
   exitCode=$?
 
   if [ $exitCode = 0 ]
@@ -36,7 +36,7 @@ if [[ "$environment" = "development" || "$environment" = "staging" || "$environm
   fi
 else
   echo "local: Executing migration script locally"
-  $PWD/scripts/local/migrate $type
+  $PWD/tasks/local/migrate $type
   exitCode=$?
 fi
 

@@ -30,8 +30,8 @@ mkdir -p $localOutputDir
 
 if [[ "$environment" = "demo" || "$environment" = "staging" || "$environment" = "production" ]]; then
 
-  echo "local: Syncing devops scripts to $environment"
-  rsync -az --delete -e "ssh" /usr/src/scripts/remote/ $server:/home/nudjtech/devops
+  echo "local: Syncing devops tasks to $environment"
+  rsync -az --delete -e "ssh" /usr/src/tasks/remote/ $server:/home/nudjtech/devops
   exitCode=$?
 
   if [ $exitCode = 0 ]
@@ -61,7 +61,7 @@ if [[ "$environment" = "demo" || "$environment" = "staging" || "$environment" = 
   fi
 else
   echo "local: Executing backup script locally"
-  $PWD/scripts/local/backup
+  $PWD/tasks/local/backup
   exitCode=$?
 fi
 

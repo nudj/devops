@@ -1,0 +1,55 @@
+#!/bin/sh
+
+nudjDirectory=$1
+
+validEnvironment() {
+  [ "$1" = "local" ] || \
+  [ "$1" = "development" ] || \
+  [ "$1" = "demo" ] || \
+  [ "$1" = "staging" ] || \
+  [ "$1" = "production" ]
+}
+
+environment=$2
+if [ -z "$2" ]
+then
+  echo "Must supply an environment - e.g. ENV=local"
+  exit 1
+fi
+
+if ! validEnvironment $environment
+then
+  echo "Must supply a valid environment - local|development|demo|staging|production"
+  exit 1
+fi
+
+script=$3
+if [ -z "$3" ]
+then
+  echo "Must supply a script name - e.g. SCRIPT=00000-export-role-tags"
+  exit 1
+fi
+
+echo "Executing $script on $environment"
+
+if [[ "$environment" = "development" || "$environment" = "demo" || "$environment" = "staging" || "$environment" = "production" ]]; then
+  server="nudj$environment"
+
+  echo "local: Syncing devops scripts to $environment"
+  rsync -az --delete -e "ssh" $PWD/tasks/remote/ $server:/home/nudjtech/devops
+  exitCode=$?
+
+  if [ $exitCode = 0 ]
+  then
+    echo "local: Executing script on $environment"
+    ssh -T $server /bin/sh -c "'/home/nudjtech/devops/execute $environment $script'"
+    exitCode=$?
+  fi
+else
+  echo "local: Executing script locally"
+  $PWD/tasks/local/execute "$script" "$nudjDirectory/api/src/scripts"
+  exitCode=$?
+fi
+
+[[ $exitCode = 0 ]] && result="complete 👍" || result="failed 👎"
+echo "local: Execution of $script on $environment $result"

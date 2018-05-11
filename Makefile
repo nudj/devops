@@ -1,5 +1,4 @@
 IMAGE:=nudj/devops:latest
-CWD=$(shell pwd)
 SYNC ?= false
 
 .PHONY: build run backup migrate
@@ -10,30 +9,43 @@ build:
 run:
 	@docker run -it --rm --name devops \
 		-v /var/run/docker.sock:/var/run/docker.sock \
-		-v $(CWD)/.ssh:/root/.ssh \
-		-v $(CWD)/.zshrc:/root/.zshrc \
-		-v $(CWD)/src/scripts:/usr/src/scripts \
-		-v $(CWD)/../server:/usr/src/local/server \
-		-v $(CWD)/../web:/usr/src/local/web \
-		-v $(CWD)/../hire:/usr/src/local/hire \
-		-v $(CWD)/../admin:/usr/src/local/admin \
-		-v $(CWD)/../api:/usr/src/local/api \
-		-v $(CWD)/../backups:/usr/src/backups \
+		-v $(PWD)/.ssh:/root/.ssh \
+		-v $(PWD)/.zshrc:/root/.zshrc \
+		-v $(PWD)/src/tasks:/usr/src/tasks \
+		-v $(PWD)/../server:/usr/src/local/server \
+		-v $(PWD)/../web:/usr/src/local/web \
+		-v $(PWD)/../hire:/usr/src/local/hire \
+		-v $(PWD)/../admin:/usr/src/local/admin \
+		-v $(PWD)/../api:/usr/src/local/api \
+		-v $(PWD)/../backups:/usr/src/backups \
 		$(IMAGE)
 
 backup:
 	@docker run --rm --name backup \
-		--env-file $(CWD)/../api/.env \
+		--env-file $(PWD)/../api/.env \
 		-v /var/run/docker.sock:/var/run/docker.sock \
-		-v $(CWD)/.ssh:/root/.ssh \
-		-v $(CWD)/../backups:/usr/src/backups \
+		-v $(PWD)/.ssh:/root/.ssh \
+		-v $(PWD)/../backups:/usr/src/backups \
 		$(IMAGE) \
-		/bin/sh -c "./scripts/backup $(ENV)"
+		/bin/sh -c "./tasks/backup $(ENV)"
 
 migrate:
 	@docker run --rm --name migrate \
-		--env-file $(CWD)/../api/.env \
+		--env-file $(PWD)/../api/.env \
 		-v /var/run/docker.sock:/var/run/docker.sock \
-		-v $(CWD)/.ssh:/root/.ssh \
+		-v $(PWD)/.ssh:/root/.ssh \
+		-v $(PWD)/src/tasks:/usr/src/tasks \
+		-v $(PWD)/src/docker-compose.yml:/usr/src/docker-compose.yml \
 		$(IMAGE) \
-		/bin/sh -c "./scripts/migrate $(ENV) $(TYPE)"
+		/bin/sh -c "./tasks/migrate $(ENV) $(TYPE)"
+
+execute:
+	@docker run --rm --name execute \
+		--env-file $(PWD)/../api/.env \
+		-v /var/run/docker.sock:/var/run/docker.sock \
+		-v $(PWD)/.ssh:/root/.ssh \
+		-v $(PWD)/src/tasks:/usr/src/tasks \
+		-v $(PWD)/src/docker-compose.yml:/usr/src/docker-compose.yml \
+		-v $(PWD)/../api/src/scripts:/usr/src/scripts \
+		$(IMAGE) \
+		/bin/sh -c "./tasks/execute '$(PWD)/..' $(ENV) $(SCRIPT)"
