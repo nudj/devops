@@ -18,7 +18,8 @@ then
   exit 1
 fi
 
-type=${2:-latest}
+target=$2
+type=${3:-latest}
 server="nudj$environment"
 
 echo "Migration of type $type on $environment"
@@ -31,12 +32,12 @@ if [[ "$environment" = "development" || "$environment" = "staging" || "$environm
   if [ $exitCode = 0 ]
   then
     echo "local: Executing migrate script on $environment"
-    ssh -T $server /bin/sh -c "'/home/nudjtech/devops/migrate $environment $type'"
+    ssh -T $server /bin/sh -c "'/home/nudjtech/devops/migrate $environment $target $type'"
     exitCode=$?
   fi
 else
   echo "local: Executing migration script locally"
-  $PWD/tasks/local/migrate $type
+  $PWD/tasks/local/migrate $target $type
   exitCode=$?
 fi
 
