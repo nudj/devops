@@ -48,7 +48,7 @@ execute:
 		-v $(PWD)/src/docker-compose.yml:/usr/src/docker-compose.yml \
 		-v $(PWD)/../api/src/scripts:/usr/src/scripts \
 		$(IMAGE) \
-		/bin/sh -c "./tasks/execute '$(PWD)/..' $(ENV) $(SCRIPT)"
+		/bin/sh -c "./tasks/execute '$(PWD)/..' $(TARGET) $(SCRIPT)"
 
 executeRemote:
 	@docker run --rm --name execute \
