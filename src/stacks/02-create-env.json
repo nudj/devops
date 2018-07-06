@@ -1,0 +1,466 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Environment subnets & routing [02-create-env]",
+    "Mappings" : {
+        "SubnetRangeMap" : {
+            "prod" :     {"1web" : ".32.0/23", "2web" : ".34.0/23", "1api" : ".36.0/23", "2api" : ".38.0/23", "1work" : ".40.0/23", "2work" : ".42.0/23", "1db" : ".44.0/23", "2db" : ".46.0/23"},
+            "staging" :  {"1web" : ".52.0/23", "2web" : ".54.0/23", "1api" : ".56.0/23", "2api" : ".58.0/23", "1work" : ".60.0/23", "2work" : ".62.0/23"},
+            "test" :     {"1web" : ".72.0/23", "2web" : ".74.0/23", "1api" : ".76.0/23", "2api" : ".78.0/23", "1work" : ".80.0/23", "2work" : ".82.0/23"},
+            "demo" :     {"1web" : ".92.0/23", "2web" : ".94.0/23", "1api" : ".96.0/23", "2api" : ".98.0/23", "1work" : ".100.0/23", "2work" : ".102.0/23", "1db" : ".104.0/23", "2db" : ".106.0/23"},
+            "perf" :     {"1web" : ".112.0/23", "2web" : ".114.0/23", "1api" : ".116.0/23", "2api" : ".118.0/23", "1work" : ".120.0/23", "2work" : ".122.0/23"},
+            "feat1" :     {"1web" : ".132.0/23", "2web" : ".134.0/23", "1api" : ".136.0/23", "2api" : ".138.0/23", "1work" : ".140.0/23", "2work" : ".142.0/23"},
+            "feat2" :     {"1web" : ".152.0/23", "2web" : ".154.0/23", "1api" : ".156.0/23", "2api" : ".158.0/23", "1work" : ".160.0/23", "2work" : ".162.0/23"},
+            "feat3" :     {"1web" : ".172.0/23", "2web" : ".174.0/23", "1api" : ".176.0/23", "2api" : ".178.0/23", "1work" : ".180.0/23", "2work" : ".182.0/23"},
+            "feat4" :     {"1web" : ".192.0/23", "2web" : ".194.0/23", "1api" : ".196.0/23", "2api" : ".198.0/23", "1work" : ".200.0/23", "2work" : ".202.0/23"},
+            "feat5" :     {"1web" : ".212.0/23", "2web" : ".214.0/23", "1api" : ".216.0/23", "2api" : ".218.0/23", "1work" : ".220.0/23", "2work" : ".222.0/23"},
+            "feat6" :     {"1web" : ".232.0/23", "2web" : ".234.0/23", "1api" : ".236.0/23", "2api" : ".238.0/23", "1work" : ".240.0/23", "2work" : ".242.0/23"}
+        }
+    },
+    "Metadata": {
+        "AWS::CloudFormation::Interface": {
+            "ParameterGroups": [
+                {
+                    "Label": {
+                        "default": "Target environment Configuration"
+                    },
+                    "Parameters": [
+                        "VPCStackName",
+                        "EnvironmentType"
+                    ]
+                }
+            ],
+            "ParameterLabels": {
+                "VPCStackName": {
+                    "default": "Target VPC stack name"
+                },
+                "EnvironmentType": {
+                    "default": "Environment type"
+                }
+            }
+        }
+    },
+    "Parameters": {
+        "VPCStackName": {
+            "Description": "The name of the target VPC stack to deploy this environment into",
+            "Type": "String"
+        },
+        "EnvironmentType": {
+            "Description": "Type of the environment to build : demo, development, staging, production or performance",
+            "Type": "String",
+            "Default": "perf",
+            "AllowedValues": [
+                "staging", "prod", "test", "demo", "perf", "feat1", "feat2", "feat3", "feat4", "feat5", "feat6"
+            ]
+        }
+    },
+    "Conditions" : {
+        "CreateDbResources" : {
+            "Fn::Or" : [
+                {"Fn::Equals" : [{"Ref" : "EnvironmentType"}, "prod"]},
+                {"Fn::Equals" : [{"Ref" : "EnvironmentType"}, "demo"]}
+            ]
+        }
+    },
+    "Resources": {
+        "Subnet1Web": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "VpcId": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCID"}},
+                "CidrBlock": { "Fn::Sub" : [ "${CIDRROOT}${CIDRRANGE}", {"CIDRROOT" : {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCCIDRROOT"}}, "CIDRRANGE" : { "Fn::FindInMap" : [ "SubnetRangeMap", { "Ref" : "EnvironmentType" }, "1web"] }} ]},
+                "AvailabilityZone": {
+                  "Fn::Select": [
+                    0,
+                    {
+                      "Fn::Split": [
+                        ",",
+                        {
+                          "Fn::ImportValue": {"Fn::Sub" : "${VPCStackName}-AvailabilityZones"}
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "Tags": [
+                    {
+                        "Key": "Network",
+                        "Value": "Private"
+                    },
+                    {
+                        "Key": "Role",
+                        "Value": "Web"
+                    },
+                    {
+                        "Key": "Name",
+                        "Value": { "Fn::Sub": "${AWS::StackName}-${EnvironmentType}-1-web" }
+                    }
+                ]
+            }
+        },
+        "Subnet1Work": {
+            "Type": "AWS::EC2::Subnet",
+            "Properties": {
+                "VpcId": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCID"}},
+                "CidrBlock": { "Fn::Sub" : [ "${CIDRROOT}${CIDRRANGE}", {"CIDRROOT" : {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCCIDRROOT"}}, "CIDRRANGE" : { "Fn::FindInMap" : [ "SubnetRangeMap", { "Ref" : "EnvironmentType" }, "1work"] }} ]},
+                "AvailabilityZone": {
+                  "Fn::Select": [
+                    0,
+                    {
+                      "Fn::Split": [
+                        ",",
+                        {
+                          "Fn::ImportValue": {"Fn::Sub" : "${VPCStackName}-AvailabilityZones"}
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "Tags": [
+                    {
+                        "Key": "Network",
+                        "Value": "Private"
+                    },
+                    {
+                        "Key": "Role",
+                        "Value": "Work"
+                    },
+                    {
+                        "Key": "Name",
+                        "Value": { "Fn::Sub": "${AWS::StackName}-${EnvironmentType}-1-work" }
+                    }
+                ]
+            }
+        },
+        "Subnet1Db": {
+            "Type": "AWS::EC2::Subnet",
+            "Condition" : "CreateDbResources",
+            "Properties": {
+                "VpcId": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCID"}},
+                "CidrBlock": { "Fn::Sub" : [ "${CIDRROOT}${CIDRRANGE}", {"CIDRROOT" : {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCCIDRROOT"}}, "CIDRRANGE" : { "Fn::FindInMap" : [ "SubnetRangeMap", { "Ref" : "EnvironmentType" }, "1db"] }} ]},
+                "AvailabilityZone": {
+                  "Fn::Select": [
+                    0,
+                    {
+                      "Fn::Split": [
+                        ",",
+                        {
+                          "Fn::ImportValue": {"Fn::Sub" : "${VPCStackName}-AvailabilityZones"}
+                        }
+                      ]
+                    }
+                  ]
+                },
+                "Tags": [
+                    {
+                        "Key": "Network",
+                        "Value": "Private"
+                    },
+                    {
+                        "Key": "Role",
+                        "Value": "Db"
+                    },
+                    {
+                        "Key": "Name",
+                        "Value": { "Fn::Sub": "${AWS::StackName}-${EnvironmentType}-1-db" }
+                    }
+                ]
+            }
+        },
+        "Subnet1WorkRouteTable": {
+            "Type": "AWS::EC2::RouteTable",
+            "Properties": {
+                "VpcId": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCID"}},
+                "Tags": [
+                    {
+                        "Key": "Network",
+                        "Value": "Private"
+                    },
+                    {
+                        "Key": "Role",
+                        "Value": "Work"
+                    },
+                    {
+                        "Key": "Name",
+                        "Value": { "Fn::Sub": "${AWS::StackName}-${EnvironmentType}-1-work" }
+                    }
+                ]
+            }
+        },
+        "Subnet1WorkRoute": {
+            "Type": "AWS::EC2::Route",
+            "Properties": {
+                "RouteTableId": {
+                    "Ref": "Subnet1WorkRouteTable"
+                },
+                "DestinationCidrBlock": "0.0.0.0/0",
+                "NatGatewayId": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-NatGatewayZone1"}}
+            }
+        },
+        "Subnet1WorkRouteTableAssociation": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "Subnet1Work"
+                },
+                "RouteTableId": {
+                    "Ref": "Subnet1WorkRouteTable"
+                }
+            }
+        },
+        "Subnet1DbRouteTable": {
+            "Type": "AWS::EC2::RouteTable",
+            "Condition" : "CreateDbResources",
+            "Properties": {
+                "VpcId": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCID"}},
+                "Tags": [
+                    {
+                        "Key": "Network",
+                        "Value": "Private"
+                    },
+                    {
+                        "Key": "Role",
+                        "Value": "Db"
+                    },
+                    {
+                        "Key": "Name",
+                        "Value": { "Fn::Sub": "${AWS::StackName}-${EnvironmentType}-1-db" }
+                    }
+                ]
+            }
+        },
+        "Subnet1DbRoute": {
+            "Type": "AWS::EC2::Route",
+            "Condition" : "CreateDbResources",
+            "Properties": {
+                "RouteTableId": {
+                    "Ref": "Subnet1DbRouteTable"
+                },
+                "DestinationCidrBlock": "0.0.0.0/0",
+                "NatGatewayId": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-NatGatewayZone1"}}
+            }
+        },
+        "Subnet1DbRouteTableAssociation": {
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Condition" : "CreateDbResources",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "Subnet1Db"
+                },
+                "RouteTableId": {
+                    "Ref": "Subnet1DbRouteTable"
+                }
+            }
+        },
+        "RedisSubnetGroup" : {
+            "Type" : "AWS::ElastiCache::SubnetGroup",
+            "Properties" : {
+                "Description" : {"Fn::Sub" : "Elastic Cache Subnet Group ${EnvironmentType}"},
+                "SubnetIds" : [ { "Ref" : "Subnet1Web" } ]
+            }
+        },
+        "ELBSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "ELBSecurityGroup",
+                "SecurityGroupEgress": [
+                    {
+                        "CidrIp": "0.0.0.0/0",
+                        "FromPort": -1,
+                        "IpProtocol": "-1",
+                        "ToPort": -1
+                    }
+                ],
+                "SecurityGroupIngress": [
+                    {
+                        "CidrIp": { "Fn::Sub" : [ "${CIDRROOT}.0.0/16", {"CIDRROOT" : {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCCIDRROOT"}}}]},
+                        "FromPort": 80,
+                        "IpProtocol": "6",
+                        "ToPort": 80
+                    }
+                ],
+                "VpcId": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCID"}},
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": { "Fn::Join": ["-", ["sg-elb", { "Ref": "EnvironmentType" } ]] }
+                    }
+                ]
+            }
+        },
+        "WebSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "WebSecurityGroup",
+                "SecurityGroupEgress": [
+                    {
+                        "CidrIp": "0.0.0.0/0",
+                        "FromPort": -1,
+                        "IpProtocol": "-1",
+                        "ToPort": -1
+                    }
+                ],
+                "SecurityGroupIngress": [
+                    {
+                        "CidrIp": { "Fn::Sub" : [ "${CIDRROOT}.0.0/16", {"CIDRROOT" : {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCCIDRROOT"}}}]},
+                        "FromPort": 80,
+                        "IpProtocol": "6",
+                        "ToPort": 80
+                    },
+                    {
+                        "CidrIp": { "Fn::Sub" : [ "${CIDRROOT}.0.0/16", {"CIDRROOT" : {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCCIDRROOT"}}}]},
+                        "FromPort": 22,
+                        "IpProtocol": "tcp",
+                        "ToPort": 22
+                    }
+                ],
+                "VpcId": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCID"}},
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": { "Fn::Join": ["-", ["sg-web", { "Ref": "EnvironmentType" } ]] }
+                    }
+                ]
+            }
+        },
+        "WorkSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "WorkSecurityGroup",
+                "SecurityGroupEgress": [
+                    {
+                        "CidrIp": "0.0.0.0/0",
+                        "FromPort": -1,
+                        "IpProtocol": "-1",
+                        "ToPort": -1
+                    }
+                ],
+                "SecurityGroupIngress": [
+                    {
+                        "CidrIp": { "Fn::Sub" : [ "${CIDRROOT}.0.0/16", {"CIDRROOT" : {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCCIDRROOT"}}}]},
+                        "FromPort": 80,
+                        "IpProtocol": "6",
+                        "ToPort": 80
+                    },
+                    {
+                        "CidrIp": { "Fn::Sub" : [ "${CIDRROOT}.0.0/16", {"CIDRROOT" : {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCCIDRROOT"}}}]},
+                        "FromPort": 22,
+                        "IpProtocol": "tcp",
+                        "ToPort": 22
+                    }
+                ],
+                "VpcId": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCID"}},
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": { "Fn::Join": ["-", ["sg-work", { "Ref": "EnvironmentType" } ]] }
+                    }
+                ]
+            }
+        },
+        "DbSecurityGroup": {
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "DbSecurityGroup",
+                "SecurityGroupEgress": [
+                    {
+                        "CidrIp": "0.0.0.0/0",
+                        "FromPort": -1,
+                        "IpProtocol": "-1",
+                        "ToPort": -1
+                    }
+                ],
+                "SecurityGroupIngress": [
+                    {
+                        "CidrIp": { "Fn::Sub" : [ "${CIDRROOT}.0.0/16", {"CIDRROOT" : {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCCIDRROOT"}}}]},
+                        "FromPort": 80,
+                        "IpProtocol": "6",
+                        "ToPort": 80
+                    },
+                    {
+                        "CidrIp": { "Fn::Sub" : [ "${CIDRROOT}.0.0/16", {"CIDRROOT" : {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCCIDRROOT"}}}]},
+                        "FromPort": 22,
+                        "IpProtocol": "tcp",
+                        "ToPort": 22
+                    }
+                ],
+                "VpcId": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCID"}},
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": { "Fn::Join": ["-", ["sg-db", { "Ref": "EnvironmentType" } ]] }
+                    }
+                ]
+            }
+        }
+    },
+    "Outputs": {
+        "Subnet1WebID": {
+            "Description": "Private subnet 1-web ID in Availability Zone 1",
+            "Value": {
+                "Ref": "Subnet1Web"
+            },
+            "Export" : {
+                "Name" : { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-Subnet1WebID" }
+            }
+        },
+        "Subnet1WorkID": {
+            "Description": "Private subnet 1-work ID in Availability Zone 1",
+            "Value": {
+                "Ref": "Subnet1Work"
+            },
+            "Export" : {
+                "Name" : { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-Subnet1WorkID" }
+            }
+        },
+        "Subnet1DbID": {
+            "Description": "Private subnet 1-db ID in Availability Zone 1",
+            "Value": {
+                "Ref": "Subnet1Db"
+            },
+            "Condition" : "CreateDbResources",
+            "Export" : {
+                "Name" : { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-Subnet1DbID" }
+            }
+        },
+        "WebSecurityGroupID" : {
+            "Value": {
+                "Ref" : "WebSecurityGroup"
+            },
+            "Export" : {
+                "Name" : { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebSecurityGroupID" }
+            }
+        },
+        "ELBSecurityGroupID" : {
+            "Value": {
+                "Ref" : "ELBSecurityGroup"
+            },
+            "Export" : {
+                "Name" : { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-ELBSecurityGroupID" }
+            }
+        },
+        "WorkSecurityGroupID" : {
+            "Value": {
+                "Ref" : "WorkSecurityGroup"
+            },
+            "Export" : {
+                "Name" : { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WorkSecurityGroupID" }
+            }
+        },
+        "DbSecurityGroupID" : {
+            "Value": {
+                "Ref" : "DbSecurityGroup"
+            },
+            "Export" : {
+                "Name" : { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-DbSecurityGroupID" }
+            }
+        },
+        "RedisSubnetGroup": {
+            "Value": {
+                "Ref": "RedisSubnetGroup"
+            },
+            "Description": "The ID of the ElasticCache subnet group",
+            "Export" : {
+                "Name" : { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-RedisSubnetGroup" }
+            }
+        }
+    }
+}

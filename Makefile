@@ -8,6 +8,7 @@ build:
 
 run:
 	@docker run -it --rm --name devops \
+		--env-file $(PWD)/.env \
 		-v /var/run/docker.sock:/var/run/docker.sock \
 		-v $(PWD)/.ssh:/root/.ssh \
 		-v $(PWD)/.zshrc:/root/.zshrc \

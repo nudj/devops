@@ -1,0 +1,20 @@
+version: '1.0'
+
+steps:
+
+  build:
+    title: Build
+    type: build
+    image_name: nudj/devops
+    tag: latest
+    working_directory: ${{main_clone}}
+    dockerfile: Dockerfile
+
+  delete_vpc:
+    image: '${{build}}'
+    working_directory: ${{main_clone}}
+    description: Delete the VPC
+    commands:
+      - ./scripts/delete-stack.sh -s staging-alb
+      - ./scripts/delete-stack.sh -s staging-networking
+      - ./scripts/delete-stack.sh -s core-vpc

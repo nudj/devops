@@ -1,0 +1,20 @@
+version: '1.0'
+
+steps:
+
+  build:
+    title: Build
+    type: build
+    image_name: nudj/devops
+    tag: latest
+    working_directory: ${{main_clone}}
+    dockerfile: Dockerfile
+
+  create_vpc:
+    image: '${{build}}'
+    working_directory: ${{main_clone}}
+    description: Create the initial VPC
+    commands:
+      - ./scripts/create-stack.sh -s core-vpc -f ./stacks/01-create-vpc.json
+      - ./scripts/create-env-network.sh -s core-vpc -f ./stacks/02-create-env.json -e staging
+      - ./scripts/create-alb.sh -s core-vpc -f ./stacks/03-create-alb.json -e staging
