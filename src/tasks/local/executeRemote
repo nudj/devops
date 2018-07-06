@@ -1,0 +1,8 @@
+#!/bin/sh
+
+script=$1
+scriptsDir=$2
+target=$3
+
+echo "local: Executing script on api service"
+docker-compose -p nudj run --no-deps --rm -v /Users/nick/dev/nudj/api/src/scripts:/usr/src/scripts api /bin/sh -c "node /usr/src/scripts $script $target"

@@ -2,44 +2,29 @@
 
 validEnvironment() {
   [ "$1" = "local" ] || \
-  [ "$1" = "development" ]
+  [ "$1" = "test" ] || \
+  [ "$1" = "development" ] || \
+  [ "$1" = "staging" ]
 }
 
-environment=$1
-if [ -z "$1" ]
+target=$1
+if [ -z "$target" ]
 then
-  echo "Must supply an environment - e.g. ENV=local"
+  echo "Must supply a target - e.g. TARGET=local"
   exit 1
 fi
 
-if ! validEnvironment $environment
+if ! validEnvironment $target
 then
-  echo "Must supply a valid environment - local|development"
+  echo "Must supply a valid target - local|test|development|staging"
   exit 1
 fi
 
-target=$2
-type=${3:-latest}
-server="nudj$environment"
+type=${2:-latest}
 
-echo "Migration of type $type on $environment"
-
-if [[ "$environment" = "development" || "$environment" = "staging" || "$environment" = "demo" || "$environment" = "production" ]]; then
-  echo "local: Syncing devops tasks to $environment"
-  rsync -az --delete -e "ssh" $PWD/tasks/remote/ $server:/home/nudjtech/devops
-  exitCode=$?
-
-  if [ $exitCode = 0 ]
-  then
-    echo "local: Executing migrate script on $environment"
-    ssh -T $server /bin/sh -c "'/home/nudjtech/devops/migrate $environment $target $type'"
-    exitCode=$?
-  fi
-else
-  echo "local: Executing migration script locally"
-  $PWD/tasks/local/migrate $target $type
-  exitCode=$?
-fi
+echo "Migration of type $type on $target"
+$PWD/tasks/local/migrate $target $type
+exitCode=$?
 
 [[ $exitCode = 0 ]] && result="complete 👍" || result="failed 👎"
-echo "local: Migration of type $type on $environment $result"
+echo "local: Migration of type $type on $target $result"

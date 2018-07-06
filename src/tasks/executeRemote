@@ -1,0 +1,37 @@
+#!/bin/sh
+
+nudjDirectory=$1
+
+validTarget() {
+  [ "$1" = "development" ] || \
+  [ "$1" = "demo" ] || \
+  [ "$1" = "staging" ] || \
+  [ "$1" = "production" ]
+}
+
+target=$2
+if [ -z "$target" ]
+then
+  echo "Must supply a target - e.g. TARGET=staging"
+  exit 1
+fi
+
+if ! validTarget $target
+then
+  echo "Must supply a valid target - development|demo|staging|production"
+  exit 1
+fi
+
+script=$3
+if [ -z "$script" ]
+then
+  echo "Must supply a script name - e.g. SCRIPT=00000-export-role-tags"
+  exit 1
+fi
+
+echo "Executing $script from local targeting $target"
+$PWD/tasks/local/executeRemote "$script" "$nudjDirectory/api/src/scripts" "$target"
+exitCode=$?
+
+[[ $exitCode = 0 ]] && result="complete 👍" || result="failed 👎"
+echo "local: Execution of $script from local targeting $target $result"

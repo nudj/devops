@@ -10,16 +10,16 @@ validEnvironment() {
   [ "$1" = "production" ]
 }
 
-environment=$2
+target=$2
 if [ -z "$2" ]
 then
-  echo "Must supply an environment - e.g. ENV=local"
+  echo "Must supply a target - e.g. ENV=local"
   exit 1
 fi
 
-if ! validEnvironment $environment
+if ! validEnvironment $target
 then
-  echo "Must supply a valid environment - local|development|demo|staging|production"
+  echo "Must supply a valid target - local|development|demo|staging|production"
   exit 1
 fi
 
@@ -30,19 +30,19 @@ then
   exit 1
 fi
 
-echo "Executing $script on $environment"
+echo "Executing $script on $target"
 
-if [[ "$environment" = "development" || "$environment" = "demo" || "$environment" = "staging" || "$environment" = "production" ]]; then
-  server="nudj$environment"
+if [[ "$target" = "development" || "$target" = "demo" || "$target" = "staging" || "$target" = "production" ]]; then
+  server="nudj$target"
 
-  echo "local: Syncing devops scripts to $environment"
+  echo "local: Syncing devops scripts to $target"
   rsync -az --delete -e "ssh" $PWD/tasks/remote/ $server:/home/nudjtech/devops
   exitCode=$?
 
   if [ $exitCode = 0 ]
   then
-    echo "local: Executing script on $environment"
-    ssh -T $server /bin/sh -c "'/home/nudjtech/devops/execute $environment $script'"
+    echo "local: Executing script on $target"
+    ssh -T $server /bin/sh -c "'/home/nudjtech/devops/execute $target $script'"
     exitCode=$?
   fi
 else
@@ -52,4 +52,4 @@ else
 fi
 
 [[ $exitCode = 0 ]] && result="complete 👍" || result="failed 👎"
-echo "local: Execution of $script on $environment $result"
+echo "local: Execution of $script on $target $result"

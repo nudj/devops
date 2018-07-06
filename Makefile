@@ -37,7 +37,7 @@ migrate:
 		-v $(PWD)/src/tasks:/usr/src/tasks \
 		-v $(PWD)/src/docker-compose.yml:/usr/src/docker-compose.yml \
 		$(IMAGE) \
-		/bin/sh -c "./tasks/migrate $(ENV) $(TARGET) $(TYPE)"
+		/bin/sh -c "./tasks/migrate $(TARGET) $(TYPE)"
 
 execute:
 	@docker run --rm --name execute \
@@ -48,4 +48,15 @@ execute:
 		-v $(PWD)/src/docker-compose.yml:/usr/src/docker-compose.yml \
 		-v $(PWD)/../api/src/scripts:/usr/src/scripts \
 		$(IMAGE) \
-		/bin/sh -c "./tasks/execute '$(PWD)/..' $(ENV) $(SCRIPT)"
+		/bin/sh -c "./tasks/execute '$(PWD)/..' $(TARGET) $(SCRIPT)"
+
+executeRemote:
+	@docker run --rm --name execute \
+		--env-file $(PWD)/../api/.env \
+		-v /var/run/docker.sock:/var/run/docker.sock \
+		-v $(PWD)/.ssh:/root/.ssh \
+		-v $(PWD)/src/tasks:/usr/src/tasks \
+		-v $(PWD)/src/docker-compose.yml:/usr/src/docker-compose.yml \
+		-v $(PWD)/../api/src/scripts:/usr/src/scripts \
+		$(IMAGE) \
+		/bin/sh -c "./tasks/executeRemote '$(PWD)/..' $(TARGET) $(SCRIPT)"
