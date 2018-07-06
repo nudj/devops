@@ -12,7 +12,7 @@ steps:
 
   delete_vpc:
     image: '${{build}}'
-    working_directory: ${{main_clone}}
+    working_directory: IMAGE_WORK_DIR
     description: Delete the VPC
     commands:
       - ./scripts/delete-stack.sh -s staging-alb
