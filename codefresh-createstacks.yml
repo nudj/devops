@@ -12,7 +12,7 @@ steps:
 
   create_vpc:
     image: '${{build}}'
-    working_directory: ${{main_clone}}
+    working_directory: ${{IMAGE_WORK_DIR}}
     description: Create the initial VPC
     commands:
       - ./scripts/create-stack.sh -s core-vpc -f ./stacks/01-create-vpc.json
