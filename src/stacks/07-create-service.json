@@ -1,0 +1,133 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "EC2 Container Service [07-create-]",
+  "Parameters": {
+    "VPCStackName": {
+      "Description": "The name of the target VPC stack to deploy this ELB into",
+      "Type": "String"
+    },
+    "ServiceName": {
+      "Description": "The name of the ECS Service to create",
+      "Type": "String"
+    },
+    "ContainerPort": {
+      "Description": "The port to allocate for this container",
+      "Type": "Number"
+    },
+    "ImageUrl": {
+      "Description": "The url of a docker image that contains the application process that will handle the traffic for this service",
+      "Type": "String"
+    },
+    "ContainerCpu": {
+      "Description": "How much CPU to give the container. 1024 is 1 CPU",
+      "Type": "Number"
+    },
+    "ContainerMemory": {
+      "Description": "How much memory in megabytes to give the container",
+      "Type": "Number"
+    },
+    "DesiredCount": {
+      "Description": "How many instances of this service do you want to launch",
+      "Type": "Number"
+    },
+    "EnvironmentType": {
+      "Description": "Name of the environment to build : demo, development, staging performance or production",
+      "Type": "String",
+      "Default": "prod",
+      "AllowedValues": [
+        "staging", "prod", "test", "demo"
+      ]
+    }
+  },
+  "Resources": {
+    "ContainerTask": {
+      "Type": "AWS::ECS::TaskDefinition",
+      "Properties": {
+        "Family" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-${ServiceName}"},
+        "Cpu": { "Ref": "ContainerCpu" },
+        "Memory": { "Ref": "ContainerMemory" },
+        "NetworkMode": "awsvpc",
+        "RequiresCompatibilities": [ "FARGATE" ],
+        "ExecutionRoleArn": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-ECSTaskExecutionRole"}},
+        "ContainerDefinitions": [
+          {
+            "Name": {"Fn::Sub" : "${ServiceName}-${EnvironmentType}"},
+            "Cpu": { "Ref": "ContainerCpu" },
+            "Memory": { "Ref": "ContainerMemory" },
+            "Image": { "Ref": "ImageUrl" },
+            "PortMappings": [
+              {
+                "ContainerPort": { "Ref": "ContainerPort" }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "ContainerService": {
+      "Type": "AWS::ECS::Service",
+      "Properties" : {
+        "ServiceName" : {"Fn::Sub" : "${ServiceName}-${EnvironmentType}"},
+        "Cluster": {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}"},
+        "LaunchType": "FARGATE",
+        "DeploymentConfiguration": {
+          "MaximumPercent": "200",
+          "MinimumHealthyPercent": "75"
+        },
+        "DesiredCount": { "Ref": "DesiredCount" },
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
+            "AssignPublicIp": "ENABLED",
+            "SecurityGroups": [ {"Fn::ImportValue" : { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-ELBSecurityGroupID" }} , {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-CloudfrontHttpSG"}} , {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-CloudfrontHttpsSG"}} ],
+            "Subnets" : [ {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-PublicSubnet1ID"}}, {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-PublicSubnet2ID"}} ]
+          }
+        },
+        "TaskDefinition": { "Ref": "ContainerTask" },
+        "LoadBalancers": [
+          {
+            "ContainerName": { "Fn::Join": ["-", [{ "Ref": "ServiceName" }, { "Ref": "EnvironmentType" } ]] },
+            "ContainerPort": { "Ref": "ContainerPort" },
+            "TargetGroupArn": { "Ref": "ServiceTargetGroup" }
+          }
+        ]
+      }
+    },
+    "ServiceTargetGroup": {
+      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+      "Properties": {
+        "HealthCheckIntervalSeconds": 10,
+        "HealthCheckPath": "/",
+        "HealthCheckProtocol": "HTTP",
+        "HealthCheckTimeoutSeconds": 5,
+        "HealthyThresholdCount": 2,
+        "TargetType": "ip",
+        "Name": {"Fn::Sub" : "${ServiceName}-${EnvironmentType}"},
+        "Port": { "Ref": "ContainerPort" },
+        "Protocol": "HTTP",
+        "UnhealthyThresholdCount": 2,
+        "VpcId": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCID"}}
+      }
+    },
+    "ServiceLoadBalancerRule": {
+      "Type": "AWS::ElasticLoadBalancingV2::ListenerRule",
+      "Properties": {
+        "Actions": [
+          {
+            "TargetGroupArn": { "Ref": "ServiceTargetGroup" },
+            "Type": "forward"
+          }
+        ],
+        "Conditions": [
+          {
+            "Field": "path-pattern",
+            "Values": [
+              "/"
+            ]
+          }
+        ],
+        "ListenerArn": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-WebALBHttpListener"}},
+        "Priority": 2
+      }
+    }
+  }
+}

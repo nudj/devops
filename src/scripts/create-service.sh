@@ -116,12 +116,25 @@ aws cloudformation describe-stacks --stack-name $ENVIRONMENT-ecs
 
 # >/dev/null 2>&1
 
+ECS_EXISTS=$?
+
+if [ $ECS_EXISTS -eq 0 ]; then
+  echo "Using existing ECS stack, $ENVIRONMENT-ecs"
+else
+  echo "Environment ECS Stack is not ready. Stopping! Create the $ENVIRONMENT-ecs stack first"
+  exit 1
+fi
+
+aws cloudformation describe-stacks --stack-name $ENVIRONMENT-service
+
+# >/dev/null 2>&1
+
 EXISTS=$?
 
 if [ $EXISTS -eq 0 ]; then
   echo "Stack exists"
   echo "Updating $ENVIRONMENT-ecs stack from $CF_TEMPLATE template"
-  aws cloudformation update-stack --stack-name $ENVIRONMENT-ecs --template-body "$template" --parameters ParameterKey=VPCStackName,ParameterValue=$STACK_NAME ParameterKey=EnvironmentType,ParameterValue=$ENVIRONMENT --capabilities CAPABILITY_IAM
+  aws cloudformation update-stack --stack-name $ENVIRONMENT-service --template-body "$template" --parameters ParameterKey=VPCStackName,ParameterValue=$STACK_NAME ParameterKey=EnvironmentType,ParameterValue=$ENVIRONMENT ParameterKey=ContainerCpu,ParameterValue=256 ParameterKey=ContainerMemory,ParameterValue=512 ParameterKey=ImageUrl,ParameterValue=nudj/web ParameterKey=ServiceName,ParameterValue=web ParameterKey=ContainerPort,ParameterValue=80 ParameterKey=DesiredCount,ParameterValue=1 --capabilities CAPABILITY_IAM
   UPDATING=$?
   if [ $UPDATING -eq 0 ]; then
     echo "Performing stack update"
@@ -130,7 +143,7 @@ if [ $EXISTS -eq 0 ]; then
     exit 0
   fi
 
-  aws cloudformation wait stack-update-complete --stack-name $ENVIRONMENT-ecs
+  aws cloudformation wait stack-update-complete --stack-name $ENVIRONMENT-service
 
   SUCCESS=$?
 
@@ -142,17 +155,17 @@ if [ $EXISTS -eq 0 ]; then
   fi
 else
   echo "Stack does not exist"
-  echo "Creating $ENVIRONMENT-ecs stack from $CF_TEMPLATE template"
-  aws cloudformation create-stack --stack-name $ENVIRONMENT-ecs --template-body "$template" --parameters ParameterKey=VPCStackName,ParameterValue=$STACK_NAME ParameterKey=EnvironmentType,ParameterValue=$ENVIRONMENT --capabilities CAPABILITY_IAM
+  echo "Creating $ENVIRONMENT-service stack from $CF_TEMPLATE template"
+  aws cloudformation create-stack --stack-name $ENVIRONMENT-service --template-body "$template" --parameters ParameterKey=VPCStackName,ParameterValue=$STACK_NAME ParameterKey=EnvironmentType,ParameterValue=$ENVIRONMENT ParameterKey=ContainerCpu,ParameterValue=256 ParameterKey=ContainerMemory,ParameterValue=512 ParameterKey=ImageUrl,ParameterValue=nudj/web ParameterKey=ServiceName,ParameterValue=web ParameterKey=ContainerPort,ParameterValue=80 ParameterKey=DesiredCount,ParameterValue=1 --capabilities CAPABILITY_IAM
 
-  aws cloudformation wait stack-create-complete --stack-name $ENVIRONMENT-ecs
+  aws cloudformation wait stack-create-complete --stack-name $ENVIRONMENT-service
 
   SUCCESS=$?
 
   if [ $SUCCESS -eq 255 ]; then
-    echo "$ENVIRONMENT-ecs failed to create"
+    echo "$ENVIRONMENT-service failed to create"
     exit 1
   else
-    echo "$ENVIRONMENT-ecs created successfully"
+    echo "$ENVIRONMENT-service created successfully"
   fi
 fi

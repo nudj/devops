@@ -68,7 +68,7 @@ EXISTS=$?
 if [ $EXISTS -eq 0 ]; then
   echo "Stack exists"
   echo "Updating $STACK_NAME stack from $CF_TEMPLATE template"
-  aws cloudformation update-stack --stack-name $STACK_NAME --template-body "$template" --parameters ParameterKey=VPCCIDRROOT,ParameterValue=10.1
+  aws cloudformation update-stack --stack-name $STACK_NAME --template-body "$template" --parameters ParameterKey=VPCCIDRROOT,ParameterValue=10.1 
   UPDATING=$?
   if [ $UPDATING -eq 0 ]; then
     echo "Performing stack update"
