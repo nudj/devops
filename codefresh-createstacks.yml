@@ -18,5 +18,5 @@ steps:
       - ./scripts/create-stack.sh -s core-vpc -f ./stacks/01-create-vpc.json
       - ./scripts/create-env-network.sh -s core-vpc -f ./stacks/02-create-env.json -e staging
       - ./scripts/create-alb.sh -s core-vpc -f ./stacks/03-create-alb.json -e staging
-      - ./scripts/create-ecs.sh -s nudj-vpc -f ./stacks/06-create-ecs.json -e staging
-      - ./scripts/create-service.sh -s nudj-vpc -f ./stacks/07-create-service.json -e staging
+      - ./scripts/create-ecs.sh -s core-vpc -f ./stacks/06-create-ecs.json -e staging
+      - ./scripts/create-service.sh -s core-vpc -f ./stacks/07-create-service.json -e staging
