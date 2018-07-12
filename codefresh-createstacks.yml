@@ -2,16 +2,8 @@ version: '1.0'
 
 steps:
 
-  build:
-    title: Build
-    type: build
-    image_name: nudj/devops
-    tag: latest
-    working_directory: ${{main_clone}}
-    dockerfile: Dockerfile
-
   create_vpc:
-    image: '${{build}}'
+    image: nudj/devops:aws
     working_directory: IMAGE_WORK_DIR
     description: Create the initial VPC
     commands:
