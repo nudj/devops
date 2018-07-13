@@ -1,0 +1,34 @@
+[
+  {
+    "ParameterKey": "VPCStackName",
+    "ParameterValue": "nudj-vpc"
+  },
+  {
+    "ParameterKey": "EnvironmentType",
+    "ParameterValue": "prod"
+  },
+  {
+    "ParameterKey": "ContainerCpu",
+    "ParameterValue": "256"
+  },
+  {
+    "ParameterKey": "ContainerMemory",
+    "ParameterValue": "512"
+  },
+  {
+    "ParameterKey": "ImageUrl",
+    "ParameterValue": "nginx"
+  },
+  {
+    "ParameterKey": "ServiceName",
+    "ParameterValue": "nginx"
+  },
+  {
+    "ParameterKey": "ContainerPort",
+    "ParameterValue": "80"
+  },
+  {
+    "ParameterKey": "DesiredCount",
+    "ParameterValue": "1"
+  }
+]

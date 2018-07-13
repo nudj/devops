@@ -48,7 +48,7 @@
         "Memory": { "Ref": "ContainerMemory" },
         "NetworkMode": "awsvpc",
         "RequiresCompatibilities": [ "FARGATE" ],
-        "ExecutionRoleArn": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-ECSTaskExecutionRole"}},
+        "ExecutionRoleArn": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-ECSTaskExecutionRoleArn"}},
         "ContainerDefinitions": [
           {
             "Name": {"Fn::Sub" : "${ServiceName}-${EnvironmentType}"},

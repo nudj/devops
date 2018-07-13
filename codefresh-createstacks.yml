@@ -7,8 +7,8 @@ steps:
     working_directory: IMAGE_WORK_DIR
     description: Create the initial VPC
     commands:
-      - ./scripts/create-stack.sh -s core-vpc -f ./stacks/01-create-vpc.json
-      - ./scripts/create-env-network.sh -s core-vpc -f ./stacks/02-create-env.json -e staging
-      - ./scripts/create-alb.sh -s core-vpc -f ./stacks/03-create-alb.json -e staging
-      - ./scripts/create-ecs.sh -s core-vpc -f ./stacks/06-create-ecs.json -e staging
-      - ./scripts/create-service.sh -s core-vpc -f ./stacks/07-create-service.json -e staging
+      - ./scripts/create-stack.sh -s vpc -e core
+      - ./scripts/create-stack.sh -s env -e staging -d core-vpc -v core-vpc
+      - ./scripts/create-stack.sh -s alb -e staging -d staging-env -v core-vpc
+      - ./scripts/create-stack.sh -s ecs -e staging -d staging-alb -v core-vpc
+      - ./scripts/create-stack.sh -s service -e staging -c web -d staging-ecs -v core-vpc

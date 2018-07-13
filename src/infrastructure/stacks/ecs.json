@@ -110,5 +110,14 @@
         }
       }
     },
+    "ECSTaskExecutionRoleArn": {
+      "Value": { "Fn::GetAtt": [ "ECSTaskExecutionRole", "Arn" ] },
+      "Description": "ECS Task Execution Role",
+      "Export": {
+        "Name": {
+          "Fn::Sub": "${VPCStackName}-${EnvironmentType}-ECSTaskExecutionRoleArn"
+        }
+      }
+    }
   }
 }

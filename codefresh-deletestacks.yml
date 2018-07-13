@@ -7,8 +7,8 @@ steps:
     working_directory: IMAGE_WORK_DIR
     description: Delete the VPC
     commands:
-      - ./scripts/delete-stack.sh -s staging-service
+      - ./scripts/delete-stack.sh -s staging-web-service
       - ./scripts/delete-stack.sh -s staging-ecs
       - ./scripts/delete-stack.sh -s staging-alb
-      - ./scripts/delete-stack.sh -s staging-networking
+      - ./scripts/delete-stack.sh -s staging-env
       - ./scripts/delete-stack.sh -s core-vpc
