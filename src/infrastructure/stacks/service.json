@@ -59,6 +59,12 @@
               {
                 "ContainerPort": { "Ref": "ContainerPort" }
               }
+            ],
+            "envrionment": [
+              {
+                "name": "ENVKEY",
+                "value": "ajtWe5cY36busuP5ZLoK-5dWLN1yT5j3U9tyf"
+              }
             ]
           }
         ]
@@ -96,7 +102,7 @@
       "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
       "Properties": {
         "HealthCheckIntervalSeconds": 10,
-        "HealthCheckPath": "/",
+        "HealthCheckPath": "/healthcheck",
         "HealthCheckProtocol": "HTTP",
         "HealthCheckTimeoutSeconds": 5,
         "HealthyThresholdCount": 2,
