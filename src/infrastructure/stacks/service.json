@@ -59,7 +59,15 @@
               {
                 "ContainerPort": { "Ref": "ContainerPort" }
               }
-            ]
+            ],
+            "logConfiguration": {
+              "logDriver": "awslogs",
+                "options": {
+                  "awslogs-group" : "${ServiceName}-${EnvironmentType}",
+                  "awslogs-region": "eu-west-1",
+                  "awslogs-stream-prefix": "ecs"
+                }
+            }
           }
         ]
       }
