@@ -1,0 +1,17 @@
+version: '1.0'
+
+steps:
+
+  create_vpc:
+    image: nudj/devops:aws
+    working_directory: IMAGE_WORK_DIR
+    description: Create the initial VPC
+    commands:
+      - ./scripts/create-stack.sh -s vpc -e core
+      - ./scripts/create-stack.sh -s env -e staging -d core-vpc -v core-vpc
+      - ./scripts/create-stack.sh -s alb -e staging -d staging-env -v core-vpc
+      - ./scripts/create-stack.sh -s ecs -e staging -d staging-alb -v core-vpc
+      - ./scripts/create-stack.sh -s service -e staging -c web -d staging-ecs -v core-vpc
+      - ./scripts/create-stack.sh -s service -e staging -c admin -d staging-ecs -v core-vpc
+      - ./scripts/create-stack.sh -s service -e staging -c hire -d staging-ecs -v core-vpc
+      - ./scripts/create-stack.sh -s service -e staging -c db -d staging-ecs -v core-vpc

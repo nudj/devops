@@ -1,0 +1,17 @@
+version: '1.0'
+
+steps:
+
+  delete_vpc:
+    image: nudj/devops:aws
+    working_directory: IMAGE_WORK_DIR
+    description: Delete the VPC
+    commands:
+      - ./scripts/delete-stack.sh -s staging-db-service
+      - ./scripts/delete-stack.sh -s staging-admin-service
+      - ./scripts/delete-stack.sh -s staging-hire-service
+      - ./scripts/delete-stack.sh -s staging-web-service
+      - ./scripts/delete-stack.sh -s staging-ecs
+      - ./scripts/delete-stack.sh -s staging-alb
+      - ./scripts/delete-stack.sh -s staging-env
+      - ./scripts/delete-stack.sh -s core-vpc
