@@ -40,6 +40,23 @@
     }
   },
   "Resources": {
+    "CloudwatchLogsGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "-",
+            [
+              "ECSLogGroup",
+              {
+                "Ref": "AWS::StackName"
+              }
+            ]
+          ]
+        },
+        "RetentionInDays": 14
+      }
+    },
     "ContainerTask": {
       "Type": "AWS::ECS::TaskDefinition",
       "Properties": {
@@ -60,14 +77,24 @@
                 "ContainerPort": { "Ref": "ContainerPort" }
               }
             ],
-            "logConfiguration": {
-              "logDriver": "awslogs",
-                "options": {
-                  "awslogs-group" : "${ServiceName}-${EnvironmentType}",
-                  "awslogs-region": "eu-west-1",
-                  "awslogs-stream-prefix": "ecs"
-                }
-            }
+            "Environment": [
+              {
+                "Name": "ENVKEY",
+                "Value": "ajtWe5cY36busuP5ZLoK-5dWLN1yT5j3U9tyf"
+              }
+            ],
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": {
+                  "Ref": "CloudwatchLogsGroup"
+                },
+                "awslogs-region": {
+                  "Ref": "AWS::Region"
+                },
+                "awslogs-stream-prefix": "ecs-content"
+              }
+            },
           }
         ]
       }
@@ -104,7 +131,7 @@
       "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
       "Properties": {
         "HealthCheckIntervalSeconds": 10,
-        "HealthCheckPath": "/",
+        "HealthCheckPath": "/healthcheck",
         "HealthCheckProtocol": "HTTP",
         "HealthCheckTimeoutSeconds": 5,
         "HealthyThresholdCount": 2,
