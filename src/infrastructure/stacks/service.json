@@ -30,6 +30,23 @@
       "Description": "How many instances of this service do you want to launch",
       "Type": "Number"
     },
+    "ListenerRuleType": {
+      "Description": "The type of listener rule to apply",
+      "Type": "String",
+      "Default": "host-header"
+    },
+    "ListenerRuleValue": {
+      "Description": "The value of listener rule to apply",
+      "Type": "String"
+    },
+    "ListenerRulePriority": {
+      "Description": "The priority of listener rule to apply",
+      "Type": "Number"
+    },
+    "HealthPing": {
+      "Description": "Healthcheck URL",
+      "Type": "String"
+    },
     "EnvironmentType": {
       "Description": "Name of the environment to build : demo, development, staging performance or production",
       "Type": "String",
@@ -99,6 +116,35 @@
         ]
       }
     },
+    "TaskSecurityGroup": {
+        "Type": "AWS::EC2::SecurityGroup",
+        "Properties": {
+            "GroupDescription": "TaskSecurityGroup",
+            "SecurityGroupEgress": [
+                {
+                    "CidrIp": "0.0.0.0/0",
+                    "FromPort": -1,
+                    "IpProtocol": "-1",
+                    "ToPort": -1
+                }
+            ],
+            "SecurityGroupIngress": [
+                {
+                    "SourceSecurityGroupId": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-ELBSecurityGroupID"}},
+                    "FromPort": { "Ref": "ContainerPort" },
+                    "IpProtocol": "6",
+                    "ToPort": { "Ref": "ContainerPort" }
+                }
+            ],
+            "VpcId": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCID"}},
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": { "Fn::Join": ["-", ["sg-task", { "Ref": "EnvironmentType" } ]] }
+                }
+            ]
+        }
+    },
     "ContainerService": {
       "Type": "AWS::ECS::Service",
       "Properties" : {
@@ -113,7 +159,7 @@
         "NetworkConfiguration": {
           "AwsvpcConfiguration": {
             "AssignPublicIp": "ENABLED",
-            "SecurityGroups": [ {"Fn::ImportValue" : { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-ELBSecurityGroupID" }} , {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-CloudfrontHttpSG"}} , {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-CloudfrontHttpsSG"}} ],
+            "SecurityGroups": [ { "Ref": "TaskSecurityGroup"} ],
             "Subnets" : [ {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-PublicSubnet1ID"}}, {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-PublicSubnet2ID"}} ]
           }
         },
@@ -154,14 +200,14 @@
         ],
         "Conditions": [
           {
-            "Field": "path-pattern",
+            "Field": { "Ref": "ListenerRuleType"},
             "Values": [
-              "/"
+              { "Ref": "ListenerRuleValue"}
             ]
           }
         ],
-        "ListenerArn": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-WebALBHttpListener"}},
-        "Priority": 2
+        "Priority": { "Ref": "ListenerRulePriority"},
+        "ListenerArn": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-WebALBHttpListener"}}
       }
     }
   }

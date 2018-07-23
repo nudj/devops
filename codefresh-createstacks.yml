@@ -12,3 +12,6 @@ steps:
       - ./scripts/create-stack.sh -s alb -e staging -d staging-env -v core-vpc
       - ./scripts/create-stack.sh -s ecs -e staging -d staging-alb -v core-vpc
       - ./scripts/create-stack.sh -s service -e staging -c web -d staging-ecs -v core-vpc
+      - ./scripts/create-stack.sh -s service -e staging -c admin -d staging-ecs -v core-vpc
+      - ./scripts/create-stack.sh -s service -e staging -c hire -d staging-ecs -v core-vpc
+      - ./scripts/create-stack.sh -s service -e staging -c db -d staging-ecs -v core-vpc
