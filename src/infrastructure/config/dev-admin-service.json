@@ -5,7 +5,7 @@
   },
   {
     "ParameterKey": "EnvironmentType",
-    "ParameterValue": "development"
+    "ParameterValue": "dev"
   },
   {
     "ParameterKey": "ContainerCpu",
@@ -17,11 +17,11 @@
   },
   {
     "ParameterKey": "ImageUrl",
-    "ParameterValue": "470250561590.dkr.ecr.eu-west-1.amazonaws.com/nudj/db:latest"
+    "ParameterValue": "470250561590.dkr.ecr.eu-west-1.amazonaws.com/nudj/admin:latest"
   },
   {
     "ParameterKey": "ServiceName",
-    "ParameterValue": "db"
+    "ParameterValue": "admin"
   },
   {
     "ParameterKey": "ContainerPort",
@@ -37,7 +37,7 @@
   },
   {
     "ParameterKey": "ListenerRuleValue",
-    "ParameterValue": "db.dev.nudj.co"
+    "ParameterValue": "admin.dev.nudj.co"
   },
   {
     "ParameterKey": "ListenerRulePriority",

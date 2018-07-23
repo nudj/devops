@@ -8,10 +8,10 @@ steps:
     description: Create the initial VPC
     commands:
       - ./scripts/create-stack.sh -s vpc -e core
-      - ./scripts/create-stack.sh -s env -e development -d core-vpc -v core-vpc
-      - ./scripts/create-stack.sh -s alb -e development -d development-env -v core-vpc
-      - ./scripts/create-stack.sh -s ecs -e development -d development-alb -v core-vpc
-      - ./scripts/create-stack.sh -s service -e development -c web -d development-ecs -v core-vpc
-      # - ./scripts/create-stack.sh -s service -e development -c admin -d development-ecs -v core-vpc
-      # - ./scripts/create-stack.sh -s service -e development -c hire -d development-ecs -v core-vpc
-      # - ./scripts/create-stack.sh -s service -e development -c db -d development-ecs -v core-vpc
+      - ./scripts/create-stack.sh -s env -e dev -d core-vpc -v core-vpc
+      - ./scripts/create-stack.sh -s alb -e dev -d dev-env -v core-vpc
+      - ./scripts/create-stack.sh -s ecs -e dev -d dev-alb -v core-vpc
+      - ./scripts/create-stack.sh -s service -e dev -c web -d dev-ecs -v core-vpc
+      # - ./scripts/create-stack.sh -s service -e dev -c admin -d dev-ecs -v core-vpc
+      # - ./scripts/create-stack.sh -s service -e dev -c hire -d dev-ecs -v core-vpc
+      # - ./scripts/create-stack.sh -s service -e dev -c db -d dev-ecs -v core-vpc

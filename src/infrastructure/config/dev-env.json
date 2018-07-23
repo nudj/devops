@@ -5,6 +5,6 @@
   },
   {
     "ParameterKey": "EnvironmentType",
-    "ParameterValue": "development"
+    "ParameterValue": "dev"
   }
 ]
