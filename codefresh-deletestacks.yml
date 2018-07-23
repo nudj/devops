@@ -7,11 +7,11 @@ steps:
     working_directory: IMAGE_WORK_DIR
     description: Delete the VPC
     commands:
-      # - ./scripts/delete-stack.sh -s dev-db-service
-      # - ./scripts/delete-stack.sh -s dev-admin-service
-      # - ./scripts/delete-stack.sh -s dev-hire-service
-      - ./scripts/delete-stack.sh -s dev-web-service
-      - ./scripts/delete-stack.sh -s dev-ecs
-      - ./scripts/delete-stack.sh -s dev-alb
-      - ./scripts/delete-stack.sh -s dev-env
+      # - ./scripts/delete-stack.sh -s test-db-service
+      # - ./scripts/delete-stack.sh -s test-admin-service
+      # - ./scripts/delete-stack.sh -s test-hire-service
+      - ./scripts/delete-stack.sh -s test-web-service
+      - ./scripts/delete-stack.sh -s test-ecs
+      - ./scripts/delete-stack.sh -s test-alb
+      - ./scripts/delete-stack.sh -s test-env
       - ./scripts/delete-stack.sh -s core-vpc
