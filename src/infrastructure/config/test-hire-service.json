@@ -5,7 +5,7 @@
   },
   {
     "ParameterKey": "EnvironmentType",
-    "ParameterValue": "dev"
+    "ParameterValue": "test"
   },
   {
     "ParameterKey": "ContainerCpu",
@@ -41,7 +41,7 @@
   },
   {
     "ParameterKey": "ListenerRulePriority",
-    "ParameterValue": "2"
+    "ParameterValue": "3"
   },
   {
     "ParameterKey": "HealthPing",
