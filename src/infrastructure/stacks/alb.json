@@ -25,64 +25,6 @@
         "Subnets" : [ {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-PublicSubnet1ID"}}, {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-PublicSubnet2ID"}} ],
         "Tags" : [{"Key" : "Network", "Value" : "public"}]
       }
-    },
-    "WebALBHttpListener": {
-      "Type": "AWS::ElasticLoadBalancingV2::Listener",
-      "Properties": {
-        "DefaultActions": [
-          {
-            "Type": "forward",
-            "TargetGroupArn": {
-              "Ref": "WebTargetGroup"
-            }
-          }
-        ],
-        "LoadBalancerArn": {
-          "Ref": "WebALB"
-        },
-        "Port": "80",
-        "Protocol": "HTTP"
-      }
-    },
-    "WebALBListenerRule": {
-      "Type": "AWS::ElasticLoadBalancingV2::ListenerRule",
-      "Properties": {
-        "Actions": [
-          {
-            "Type": "forward",
-            "TargetGroupArn": {
-              "Ref": "WebTargetGroup"
-            }
-          }
-        ],
-        "Conditions": [
-          {
-            "Field": "path-pattern",
-            "Values": [
-              "/"
-            ]
-          }
-        ],
-        "ListenerArn": {
-          "Ref": "WebALBHttpListener"
-        },
-        "Priority": 1
-      }
-    },
-    "WebTargetGroup": {
-      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
-      "Properties": {
-        "HealthCheckIntervalSeconds": 10,
-        "HealthCheckPath": "/index.html",
-        "HealthCheckProtocol": "HTTP",
-        "HealthCheckTimeoutSeconds": 5,
-        "HealthyThresholdCount": 2,
-        "Name": { "Fn::Sub": "WebTargetGroup-${EnvironmentType}" },
-        "Port": 80,
-        "Protocol": "HTTP",
-        "UnhealthyThresholdCount": 2,
-        "VpcId": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCID"}}
-      }
     }
   },
   "Outputs" : {
@@ -92,13 +34,6 @@
       "Description": "Name of Web ALB",
       "Export" : {
         "Name" : { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebALBName" }
-      }
-    },
-    "WebALBHttpListener" : {
-      "Value": { "Ref":"WebALBHttpListener"},
-      "Description": "Name of Web ALB",
-      "Export" : {
-        "Name" : { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebALBHttpListener" }
       }
     },
     "WebALBDomain": {
@@ -113,13 +48,6 @@
       "Description": "Web ALB Domain",
       "Export" : {
         "Name" : { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebALBZone" }
-      }
-    },
-    "WebTargetGroup": {
-      "Value": { "Ref" : "WebTargetGroup" },
-      "Description": "Web Target Group",
-      "Export" : {
-        "Name" : { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebTargetGroup" }
       }
     }
   }

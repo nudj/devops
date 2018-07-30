@@ -5,7 +5,7 @@
   },
   {
     "ParameterKey": "EnvironmentType",
-    "ParameterValue": "staging"
+    "ParameterValue": "test"
   },
   {
     "ParameterKey": "ContainerCpu",
@@ -17,11 +17,11 @@
   },
   {
     "ParameterKey": "ImageUrl",
-    "ParameterValue": "470250561590.dkr.ecr.eu-west-1.amazonaws.com/nudj/web:latest"
+    "ParameterValue": "470250561590.dkr.ecr.eu-west-1.amazonaws.com/nudj/db:latest"
   },
   {
     "ParameterKey": "ServiceName",
-    "ParameterValue": "web"
+    "ParameterValue": "db"
   },
   {
     "ParameterKey": "ContainerPort",
@@ -37,11 +37,11 @@
   },
   {
     "ParameterKey": "ListenerRuleValue",
-    "ParameterValue": "web.staging.nudj.co"
+    "ParameterValue": "db.dev.nudj.co"
   },
   {
     "ParameterKey": "ListenerRulePriority",
-    "ParameterValue": "2"
+    "ParameterValue": "5"
   },
   {
     "ParameterKey": "HealthPing",
