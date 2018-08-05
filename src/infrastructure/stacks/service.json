@@ -176,16 +176,16 @@
     "ServiceTargetGroup": {
       "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
       "Properties": {
-        "HealthCheckIntervalSeconds": 10,
+        "HealthCheckIntervalSeconds": 30,
         "HealthCheckPath": "/healthcheck",
         "HealthCheckProtocol": "HTTP",
-        "HealthCheckTimeoutSeconds": 5,
+        "HealthCheckTimeoutSeconds": 10,
         "HealthyThresholdCount": 2,
         "TargetType": "ip",
         "Name": {"Fn::Sub" : "${ServiceName}-${EnvironmentType}"},
         "Port": { "Ref": "ContainerPort" },
         "Protocol": "HTTP",
-        "UnhealthyThresholdCount": 2,
+        "UnhealthyThresholdCount": 10,
         "VpcId": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCID"}}
       }
     },
