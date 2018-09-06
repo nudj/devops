@@ -54,9 +54,9 @@ function parseCommonArguments() {
 }
 
 function startBuildAndWait() {
-  buildId=$(aws codebuild start-build --region us-east-1 --project-name $PROJECT --source-version $CF_REVISION --environment-variables-override name=SHA1,value=$CF_REVISION,type=PLAINTEXT name=BRANCH,value=$CIRCLE_BRANCH,type=PLAINTEXT name=APP_NAME,value=$APP_NAME,type=PLAINTEXT| jq '.build.id' | tr -d '"')
+  buildId=$(aws codebuild start-build --region $AWS_DEFAULT_REGION --project-name $PROJECT --source-version $CF_REVISION --environment-variables-override name=SHA1,value=$CF_REVISION,type=PLAINTEXT name=BRANCH,value=$CIRCLE_BRANCH,type=PLAINTEXT name=APP_NAME,value=$APP_NAME,type=PLAINTEXT| jq '.build.id' | tr -d '"')
 
-  buildJson=$(aws codebuild batch-get-builds --region us-east-1 --ids $buildId)
+  buildJson=$(aws codebuild batch-get-builds --region $AWS_DEFAULT_REGION --ids $buildId)
   complete=$(echo $buildJson | jq '.builds[0].buildComplete' | tr -d '"')
 
   printf "Wait for CodeBuild project $PROJECT to complete .."
@@ -70,7 +70,7 @@ function startBuildAndWait() {
       exit 1
     fi
 
-    buildJson=$(aws codebuild batch-get-builds --region us-east-1 --ids $buildId)
+    buildJson=$(aws codebuild batch-get-builds --region $AWS_DEFAULT_REGION --ids $buildId)
     complete=$(echo $buildJson | jq '.builds[0].buildComplete' | tr -d '"')
 
     printf "."
@@ -81,7 +81,7 @@ function startBuildAndWait() {
   groupName=$(echo $buildJson | jq '.builds[0].logs.groupName' | tr -d '"')
   streamName=$(echo $buildJson | jq '.builds[0].logs.streamName' | tr -d '"')
 
-  logsJson=$(aws logs get-log-events --region us-east-1 --log-group-name $groupName --log-stream-name $streamName)
+  logsJson=$(aws logs get-log-events --region $AWS_DEFAULT_REGION --log-group-name $groupName --log-stream-name $streamName)
 
   echo $logsJson | jq -r '.events[].message|rtrimstr("\n")'
 
