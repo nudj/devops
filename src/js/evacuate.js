@@ -28,13 +28,19 @@ aql.useBasicAuth(process.env.AQL_USER, process.env.AQL_PASS)
 // const script = require(`./arango-to-mysql`);
 const script = async ({ aql, sql, nosql }) => {
   console.log('Yaaaaaas!')
+
+  const collectionCursor = aql.collection('surveys')
+  const collectionCursorAll = await collectionCursor.all()
+  const surveys = await collectionCursorAll.all()
+
+  console.log('surveys', surveys)
 }
 
 (async () => {
   let exitCode = 0
   try {
     // await script({ aql, sql, nosql })
-    await script({})
+    await script({ aql })
   } catch (error) {
     console.log('\n\n', error)
     exitCode = 1
