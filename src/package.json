@@ -1,0 +1,22 @@
+{
+  "name": "devops",
+  "version": "0.1.0",
+  "description": "nudj devops",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nudj/devops.git"
+  },
+  "author": "Nick Collings",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nudj/devops/issues"
+  },
+  "homepage": "https://github.com/nudj/devops#readme",
+  "dependencies": {
+    "envkey": "^1.1.4"
+  }
+}
