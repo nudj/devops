@@ -8,4 +8,4 @@ steps:
     description: Create the initial VPC
     commands:
       - eval $(envkey-source)
-      - ./scripts/execute-remote.sh
+      - ./scripts/execute-remote.sh -p evacuate-project
