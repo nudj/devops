@@ -6,4 +6,4 @@ phases:
       - echo "Commit $SHA1, Branch $BRANCH, App $APP_NAME, CODEBUILD_SOURCE_VERSION $CODEBUILD_SOURCE_VERSION"
       - cd ./src
       - npm i
-      - node ./scripts/evacuate
+      - node ./js/evacuate
