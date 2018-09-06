@@ -1,0 +1,10 @@
+version: '1.0'
+
+steps:
+
+  create_vpc:
+    image: nudj/devops:aws
+    working_directory: IMAGE_WORK_DIR
+    description: Create the initial VPC
+    commands:
+      - .eval $(envkey-source)
