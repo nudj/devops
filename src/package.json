@@ -18,6 +18,7 @@
   "homepage": "https://github.com/nudj/devops#readme",
   "dependencies": {
     "arangojs": "^6.6.0",
+    "aws-sdk": "^2.310.0",
     "date-fns": "^1.29.0",
     "envkey": "^1.1.4",
     "hash-generator": "^0.1.0",
