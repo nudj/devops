@@ -38,8 +38,12 @@ const script = async ({ aql, sql, nosql }) => {
   const surveys = await collectionCursorAll.all()
   console.log('surveys', surveys)
 
-  const people = await sql.select().from('people')
-  console.log('people', people)
+  try {
+    const people = await sql.select().from('people')
+    console.log('people', people)
+  } catch (error) {
+    console.log('error', error.message)
+  }
 
   const newitem = await nosql.put({
     TableName: 'test',
