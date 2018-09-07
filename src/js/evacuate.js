@@ -34,7 +34,7 @@ const script = async ({ aql, sql, nosql }) => {
   const surveys = await collectionCursorAll.all()
   console.log('surveys', surveys)
 
-  const people = sql.select().from('people')
+  const people = await sql.select().from('people')
   console.log('people', people)
 }
 
