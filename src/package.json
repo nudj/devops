@@ -23,6 +23,7 @@
     "hash-generator": "^0.1.0",
     "knex": "^0.15.2",
     "lodash": "^4.17.10",
+    "mysql": "2.16.0",
     "promise-serial": "^0.1.5"
   }
 }
