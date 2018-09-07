@@ -51,7 +51,7 @@ const script = async ({ aql, sql, nosql }) => {
       id: 0,
       key: 'value'
     }
-  })
+  }).promise()
   console.log('newitem', newitem)
 }
 
