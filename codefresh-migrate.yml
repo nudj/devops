@@ -2,10 +2,9 @@ version: '1.0'
 
 steps:
 
-  executeRemote:
+  migrate:
     image: nudj/devops:aws
     working_directory: IMAGE_WORK_DIR
-    description: Create the initial VPC
     commands:
       - eval $(envkey-source)
-      - ./scripts/execute-remote.sh -p evacuate-project
+      - ./scripts/execute-remote.sh -p migrate-project
