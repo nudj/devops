@@ -2,9 +2,8 @@ const format = require('date-fns/format')
 
 const {
   TABLES,
-  FIELDS,
-  COLLECTIONS
-} = require('./sql')
+  FIELDS
+} = require('../../lib/sql')
 
 const OLD_COLLECTIONS = {
   PEOPLE: TABLES.PEOPLE,
@@ -58,10 +57,12 @@ const TABLE_ORDER = [
   TABLES.ROLE_TAGS,
   TABLES.SURVEY_QUESTION_TAGS,
   TABLES.ACCESS_REQUESTS,
-  TABLES.ACCEPTED_ACCESS_REQUESTS
+  TABLES.ACCEPTED_ACCESS_REQUESTS,
+  TABLES.JOB_VIEW_EVENTS,
+  TABLES.MESSAGE_EVENTS
 ]
-const NEW_TO_OLD_COLLECTIONS = {
-  [COLLECTIONS.JOB_VIEW_EVENTS]: OLD_COLLECTIONS.EVENTS
+const NEW_TABLES_TO_OLD_COLLECTIONS = {
+  [TABLES.JOB_VIEW_EVENTS]: OLD_COLLECTIONS.EVENTS
 }
 const FIELD_TO_PATH = {
   [TABLES.ACCOUNTS]: {
@@ -69,6 +70,9 @@ const FIELD_TO_PATH = {
   },
   [TABLES.JOBS]: {
     [FIELDS[TABLES.JOBS].TEMPLATE]: 'templateTags.0'
+  },
+  [TABLES.JOB_VIEW_EVENTS]: {
+    [FIELDS[TABLES.JOB_VIEW_EVENTS].JOB]: 'entityId'
   }
 }
 const RELATIONS = {
@@ -151,6 +155,9 @@ const RELATIONS = {
   [TABLES.ACCEPTED_ACCESS_REQUESTS]: {
     [FIELDS[TABLES.ACCEPTED_ACCESS_REQUESTS].ACCESS_REQUEST]: TABLES.ACCESS_REQUESTS,
     [FIELDS[TABLES.ACCEPTED_ACCESS_REQUESTS].HIRER]: TABLES.HIRERS
+  },
+  [TABLES.JOB_VIEW_EVENTS]: {
+    [FIELDS[TABLES.JOB_VIEW_EVENTS].JOB]: TABLES.JOBS
   }
 }
 const SELF_RELATIONS = {
@@ -186,7 +193,7 @@ const ORDER_CACHES = {
     [FIELDS[TABLES.SURVEY_SECTIONS].SURVEY_QUESTIONS]: TABLES.SURVEY_QUESTIONS
   }
 }
-const newToOldCollection = collection => NEW_TO_OLD_COLLECTIONS[collection] || collection
+const newTableToOldCollection = table => NEW_TABLES_TO_OLD_COLLECTIONS[table] || table
 const fieldToPath = (table, prop) => (FIELD_TO_PATH[table] && FIELD_TO_PATH[table][prop]) || prop
 const dateToTimestamp = date => {
   date = date || format(new Date())
@@ -196,13 +203,13 @@ const dateToTimestamp = date => {
 module.exports = {
   TABLE_ORDER,
   OLD_COLLECTIONS,
-  NEW_TO_OLD_COLLECTIONS,
+  NEW_TABLES_TO_OLD_COLLECTIONS,
   RELATIONS,
   SELF_RELATIONS,
   FROM_TO_RELATIONS,
   MANY_RELATIONS,
   ORDER_CACHES,
-  newToOldCollection,
+  newTableToOldCollection,
   fieldToPath,
   dateToTimestamp
 }

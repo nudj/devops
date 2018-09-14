@@ -7,7 +7,6 @@ const isNil = require('lodash/isNil')
 const promiseSerial = require('promise-serial')
 const {
   OLD_COLLECTIONS,
-  NEW_TO_OLD_COLLECTIONS,
   TABLE_ORDER,
   RELATIONS,
   SELF_RELATIONS,
@@ -15,16 +14,16 @@ const {
   MANY_RELATIONS,
   ORDER_CACHES,
   fieldToPath,
-  dateToTimestamp
+  dateToTimestamp,
+  newTableToOldCollection
 } = require('./helpers')
 const {
   TABLES,
   FIELDS,
-  SLUG_GENERATORS,
-  COLLECTIONS
+  SLUG_GENERATORS
 } = require('./sql')
 
-async function action ({ aql, sql, nosql }) {
+async function action ({ db, sql }) {
   const idMaps = {}
   const slugMaps = {}
 
@@ -35,8 +34,8 @@ async function action ({ aql, sql, nosql }) {
     slugMaps[tableName] = {}
 
     // fetch all items from the corresponding Arango collection
-    const collectionName = tableName
-    const collectionCursor = aql.collection(collectionName)
+    const collectionName = newTableToOldCollection(tableName)
+    const collectionCursor = db.collection(collectionName)
     const collectionCursorAll = await collectionCursor.all()
     const items = await collectionCursorAll.all()
 
@@ -184,7 +183,7 @@ async function action ({ aql, sql, nosql }) {
   }))
 
   // create currentEmployments
-  const employmentsCursor = aql.collection(OLD_COLLECTIONS.EMPLOYMENTS)
+  const employmentsCursor = db.collection(OLD_COLLECTIONS.EMPLOYMENTS)
   const employmentsCurrentCursor = await employmentsCursor.byExample({
     current: true
   })
@@ -199,7 +198,7 @@ async function action ({ aql, sql, nosql }) {
   }))
 
   // create currentPersonRoles
-  const personRolesCursor = aql.collection(OLD_COLLECTIONS.PERSON_ROLES)
+  const personRolesCursor = db.collection(OLD_COLLECTIONS.PERSON_ROLES)
   const personRolesCurrentCursor = await personRolesCursor.byExample({
     current: true
   })
@@ -213,34 +212,13 @@ async function action ({ aql, sql, nosql }) {
     })
   }))
 
-  // copy data from old collections to their new counterparts in the nosql store
-  await promiseSerial(map(NEW_TO_OLD_COLLECTIONS, (oldCollectionName, newCollectionName) => async () => {
-    const newCollectionCursor = nosql.collection(newCollectionName)
-    const oldCollectionCursor = aql.collection(oldCollectionName)
-    const oldCollectionCursorAll = await oldCollectionCursor.all()
-    const oldItems = await oldCollectionCursorAll.all()
-
-    // copy values from old items to new items
-    await promiseSerial(oldItems.map(oldItem => async () => {
-      let props
-      switch (newCollectionName) {
-        // copy events into jobViewEvents collection in NoSQL
-        case COLLECTIONS.JOB_VIEW_EVENTS:
-          props = {
-            created: dateToTimestamp(oldItem.created),
-            modified: dateToTimestamp(oldItem.modified),
-            job: idMaps[TABLES.JOBS][oldItem.entityId],
-            browserId: oldItem.browserId
-          }
-          break
-      }
-      await newCollectionCursor.save(props)
-    }))
+  // loop over referral key->slug and store to help with old url remapping
+  await promiseSerial(map(slugMaps[TABLES.REFERRALS], (slug, _key) => async () => {
+    await sql(TABLES.REFERRAL_KEY_TO_SLUG_MAP).insert({
+      [FIELDS[TABLES.REFERRAL_KEY_TO_SLUG_MAP].REFERRAL_KEY]: _key,
+      [FIELDS[TABLES.REFERRAL_KEY_TO_SLUG_MAP].JOB_SLUG]: slug
+    })
   }))
-
-  // loop over referral key->slug and store in NoSQL store to help with old url remapping
-  const referralKeyToSlugMapsCursor = await nosql.collection(COLLECTIONS.REFERRAL_KEY_TO_SLUG_MAP)
-  await promiseSerial(map(slugMaps[TABLES.REFERRALS], (slug, _key) => () => referralKeyToSlugMapsCursor.save({ _key, slug })))
 }
 
 module.exports = action

@@ -1,11 +1,8 @@
-const deepmerge = require('deepmerge')
+const { merge } = require('@nudj/library')
 const invert = require('lodash/invert')
 const reduce = require('lodash/reduce')
 
 const slugGenerators = require('./slug-generators')
-
-// make merge non-destructive (emulates immutability)
-const merge = (...objs) => deepmerge.all([{}, ...objs], { clone: true })
 
 const TABLES = {
   ACCEPTED_ACCESS_REQUESTS: 'acceptedAccessRequests',
@@ -23,9 +20,12 @@ const TABLES = {
   HIRERS: 'hirers',
   JOBS: 'jobs',
   JOB_TAGS: 'jobTags',
+  JOB_VIEW_EVENTS: 'jobViewEvents',
+  MESSAGE_EVENTS: 'messageEvents',
   PEOPLE: 'people',
   PERSON_ROLES: 'personRoles',
   REFERRALS: 'referrals',
+  REFERRAL_KEY_TO_SLUG_MAP: 'referralKeyToSlugMaps',
   RELATED_JOBS: 'relatedJobs',
   ROLES: 'roles',
   ROLE_TAGS: 'roleTags',
@@ -121,6 +121,13 @@ const FIELDS = {
     JOB: 'job',
     TAG: 'tag'
   },
+  [TABLES.JOB_VIEW_EVENTS]: {
+    BROWSER_ID: 'browserId',
+    JOB: 'job'
+  },
+  [TABLES.MESSAGE_EVENTS]: {
+    HASH: 'hash'
+  },
   [TABLES.PEOPLE]: {
     EMAIL: 'email',
     FIRST_NAME: 'firstName',
@@ -142,6 +149,10 @@ const FIELDS = {
     PERSON: 'person',
     JOB: 'job',
     PARENT: 'parent'
+  },
+  [TABLES.REFERRAL_KEY_TO_SLUG_MAP]: {
+    REFERRAL_KEY: 'referralKey',
+    JOB_SLUG: 'jobSlug'
   },
   [TABLES.RELATED_JOBS]: {
     FROM: 'from',
@@ -416,6 +427,16 @@ const INDICES = merge(
         name: `${TABLES.ACCEPTED_ACCESS_REQUESTS}ByAccessRequestHirer`,
         fields: [F.ACCEPTED_ACCESS_REQUESTS.ACCESS_REQUEST, F.ACCEPTED_ACCESS_REQUESTS.HIRER]
       }
+    },
+    [TABLES.REFERRAL_KEY_TO_SLUG_MAP]: {
+      [F.REFERRAL_KEY_TO_SLUG_MAP.REFERRAL_KEY]: {
+        name: `${TABLES.REFERRAL_KEY_TO_SLUG_MAP}ByReferralKey`,
+        fields: [F.REFERRAL_KEY_TO_SLUG_MAP.REFERRAL_KEY]
+      },
+      [F.REFERRAL_KEY_TO_SLUG_MAP.JOB_SLUG]: {
+        name: `${TABLES.REFERRAL_KEY_TO_SLUG_MAP}ByJobSlug`,
+        fields: [F.MESSAGE_EVENTS.JOB_SLUG]
+      }
     }
   }
 )
@@ -433,6 +454,8 @@ function createEnumDefinition (items) {
 function defaultConfig (t, knex) {
   t.charset('utf8mb4') // to support emoji
   t.collate('utf8mb4_bin') // to support emoji
+}
+function defaultFields (t, knex) {
   // Reason for choosing INT over BIGINT as the primary key
   // http://ronaldbradford.com/blog/bigint-v-int-is-there-a-big-deal-2008-07-18/
   t.increments(FIELDS.GENERIC.ID).primary('byId')
@@ -496,6 +519,7 @@ module.exports = {
 
   // functions
   defaultConfig,
+  defaultFields,
   emailType,
   urlType,
   relationType,

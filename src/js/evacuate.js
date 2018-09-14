@@ -1,12 +1,11 @@
 require('envkey')
 const { Database } = require('arangojs')
 const knex = require('knex')
-const AWS = require('aws-sdk')
 
 const AQL_URL = `${process.env.AQL_PROTOCOL}://${process.env.AQL_HOST}:${process.env.AQL_PORT}`
-const aql = new Database({ url: AQL_URL })
-aql.useDatabase(process.env.AQL_NAME)
-aql.useBasicAuth(process.env.AQL_USER, process.env.AQL_PASS)
+const db = new Database({ url: AQL_URL })
+db.useDatabase(process.env.AQL_NAME)
+db.useBasicAuth(process.env.AQL_USER, process.env.AQL_PASS)
 
 const sql = knex({
   client: 'mysql',
@@ -20,20 +19,11 @@ const sql = knex({
   }
 })
 
-AWS.config.update({
-  region: process.env.AWS_DEFAULT_REGION
-})
-const nosql = new AWS.DynamoDB.DocumentClient()
-
-// const nosql = new Database({ url: NOSQL_URL })
-// nosql.useDatabase(process.env.NOSQL_NAME)
-// nosql.useBasicAuth(process.env.NOSQL_USER, process.env.NOSQL_PASS)
-
 // const script = require(`./arango-to-mysql`);
-const script = async ({ aql, sql, nosql }) => {
+const script = async ({ db, sql }) => {
   console.log('Yaaaaaas!')
 
-  const collectionCursor = aql.collection('surveys')
+  const collectionCursor = db.collection('surveys')
   const collectionCursorAll = await collectionCursor.all()
   const surveys = await collectionCursorAll.all()
   console.log('surveys', surveys)
@@ -44,21 +34,12 @@ const script = async ({ aql, sql, nosql }) => {
   } catch (error) {
     console.log('error', error.message)
   }
-
-  const newitem = await nosql.put({
-    TableName: 'test',
-    Item: {
-      id: 0,
-      key: 'value'
-    }
-  }).promise()
-  console.log('newitem', newitem)
 }
 
 (async () => {
   let exitCode = 0
   try {
-    await script({ aql, sql, nosql })
+    await script({ db, sql })
   } catch (error) {
     console.log('\n\n', error)
     exitCode = 1
