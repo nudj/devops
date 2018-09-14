@@ -19,22 +19,7 @@ const sql = knex({
   }
 })
 
-// const script = require(`./arango-to-mysql`);
-const script = async ({ db, sql }) => {
-  console.log('Yaaaaaas!')
-
-  const collectionCursor = db.collection('surveys')
-  const collectionCursorAll = await collectionCursor.all()
-  const surveys = await collectionCursorAll.all()
-  console.log('surveys', surveys)
-
-  try {
-    const people = await sql.select().from('people')
-    console.log('people', people)
-  } catch (error) {
-    console.log('error', error.message)
-  }
-}
+const script = require(`./arango-to-mysql`);
 
 (async () => {
   let exitCode = 0
