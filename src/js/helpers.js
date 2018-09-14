@@ -3,7 +3,7 @@ const format = require('date-fns/format')
 const {
   TABLES,
   FIELDS
-} = require('../../lib/sql')
+} = require('./sql')
 
 const OLD_COLLECTIONS = {
   PEOPLE: TABLES.PEOPLE,
