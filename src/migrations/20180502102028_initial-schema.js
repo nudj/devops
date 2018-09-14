@@ -8,7 +8,7 @@ const {
   emailType,
   urlType,
   relationType
-} = require('../lib/sql')
+} = require('../js/sql')
 
 exports.up = async knex => {
   await knex.schema
