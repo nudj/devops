@@ -8,9 +8,11 @@ async function action ({ db, sql }) {
   await promiseSerial(TABLE_ORDER.map(tableName => async () => {
     const collectionName = newTableToOldCollection(tableName)
     const collectionCursor = db.collection(collectionName)
-    const aqlCount = await collectionCursor.count()
+    const aqlResponse = await collectionCursor.count()
+    const aqlCount = aqlResponse.count
 
-    const sqlCount = await sql(tableName).count()
+    const sqlResponse = await sql(tableName).count()
+    const sqlCount = sqlResponse[0]['count(*)']
 
     console.log('aqlCount', aqlCount)
     console.log('sqlCount', sqlCount)
