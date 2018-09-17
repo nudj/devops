@@ -9,6 +9,8 @@ steps:
     tag: aws
     working_directory: ${{main_clone}}
     dockerfile: Dockerfile
+    build_arguments:
+      - NPM_TOKEN=${{NPM_TOKEN}}
 
   push:
     title: Push
