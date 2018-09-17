@@ -3,7 +3,7 @@ version: '1.0'
 steps:
 
   create_vpc:
-    image: sol-tools:test
+    image: 389706514211.dkr.ecr.eu-west-1.amazonaws.com/sol-tools:test
     working_directory: IMAGE_WORK_DIR
     description: Create the initial VPC
     commands:
