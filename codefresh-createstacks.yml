@@ -4,6 +4,8 @@ steps:
 
   create_vpc:
     image: 389706514211.dkr.ecr.eu-west-1.amazonaws.com/sol-tools:test
+    provider: 'ecr'
+    registry: ecr
     working_directory: IMAGE_WORK_DIR
     description: Create the initial VPC
     commands:
