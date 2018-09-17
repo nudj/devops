@@ -14,8 +14,6 @@ async function action ({ db, sql }) {
     const sqlResponse = await sql(tableName).count()
     const sqlCount = sqlResponse[0]['count(*)']
 
-    console.log('aqlCount', aqlCount)
-    console.log('sqlCount', sqlCount)
     const result = aqlCount === sqlCount ? '👍' : '👎'
     console.log(`${tableName} (${sqlCount}) - ${collectionName} (${aqlCount}) - ${result}`)
   }))
