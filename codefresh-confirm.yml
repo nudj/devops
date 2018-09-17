@@ -2,7 +2,7 @@ version: '1.0'
 
 steps:
 
-  evacuate:
+  confirm:
     image: nudj/devops:aws
     working_directory: IMAGE_WORK_DIR
     commands:
