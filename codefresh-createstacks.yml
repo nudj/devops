@@ -9,4 +9,5 @@ steps:
     commands:
       - sol layer build -l core
       - sol layer build -l env -e test
+      - sol layer build -l db -e test
       - sol layer build -l service -e test -c web
