@@ -1,0 +1,22 @@
+[
+  {
+    "ParameterKey": "VPCStackName",
+    "ParameterValue": "core-vpc"
+  },
+  {
+    "ParameterKey": "EnvironmentType",
+    "ParameterValue": "test"
+  },
+  {
+    "ParameterKey": "DatabaseUsername",
+    "ParameterValue": "nudj_aurora_user"
+  },
+  {
+    "ParameterKey": "DatabasePassword",
+    "ParameterValue": "oK6vocpQU8Jyb7NJck7x7UZCfFHE4uHXd33o84Vmp"
+  },
+  {
+    "ParameterKey": "MultiAZ",
+    "ParameterValue": "false"
+  }
+]
