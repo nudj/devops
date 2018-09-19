@@ -3,10 +3,11 @@ version: '1.0'
 steps:
 
   create_vpc:
-    image: sol-tools:test
+    image: fdearle/sol-tools
     working_directory: IMAGE_WORK_DIR
     description: Create the initial VPC
     commands:
       - sol layer build -l core
       - sol layer build -l env -e test
+      - sol layer build -l db -e test
       - sol layer build -l service -e test -c web
