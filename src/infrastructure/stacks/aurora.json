@@ -117,8 +117,8 @@
 			"Type": "AWS::RDS::DBCluster",
 			"Properties": {
 				"DatabaseName": { "Ref": "DatabaseName" },
-				"Engine": "aurora",
-				"EngineVersion": "5.7",
+				"Engine": "aurora-mysql",
+				"EngineVersion": "5.7.12",
 				"MasterUsername": { "Ref": "DatabaseUsername" },
 				"MasterUserPassword": { "Ref": "DatabasePassword" },
 				"BackupRetentionPeriod": 1,
@@ -131,8 +131,8 @@
 		"DatabasePrimaryInstance": {
 			"Type": "AWS::RDS::DBInstance",
 			"Properties": {
-				"Engine": "aurora",
-				"EngineVersion": "5.7",
+				"Engine": "aurora-mysql",
+				"EngineVersion": "5.7.12",
 				"DBClusterIdentifier": { "Ref": "DatabaseCluster" },
 				"DBInstanceClass": "db.t2.small",
 				"DBSubnetGroupName": { "Ref": "DatabaseSubnetGroup" }
@@ -227,8 +227,8 @@
 			"Type": "AWS::RDS::DBInstance",
 			"Condition": "IsMultiAZ",
 			"Properties": {
-				"Engine": "aurora",
-				"EngineVersion": "5.7",
+				"Engine": "aurora-mysql",
+				"EngineVersion": "5.7.12",
 				"DBClusterIdentifier": { "Ref": "DatabaseCluster" },
 				"DBInstanceClass": "db.t2.small",
 				"DBSubnetGroupName": { "Ref": "DatabaseSubnetGroup" }
