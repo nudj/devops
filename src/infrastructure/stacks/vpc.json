@@ -316,7 +316,15 @@
             }
         },
         "AvailabilityZones": {
-            "Value": { "Fn::GetAtt" : [ "PublicSubnet1", "AvailabilityZone" ] },
+            "Value": {
+              "Fn::Join": [
+                  ",",
+                  [
+                    { "Fn::GetAtt" : [ "PublicSubnet1", "AvailabilityZone" ] },
+                    { "Fn::GetAtt" : [ "PublicSubnet2", "AvailabilityZone" ] }
+                  ]
+              ]
+            },
             "Description": "VPC Subnet AvailabilityZones (comma separated list)",
             "Export" : {
                 "Name" : { "Fn::Sub": "${AWS::StackName}-AvailabilityZones" }
