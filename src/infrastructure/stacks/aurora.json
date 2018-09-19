@@ -96,6 +96,19 @@
 				"SubnetIds": [ {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-Subnet1WorkID"}}, {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-Subnet2WorkID"}} ]
 			}
 		},
+		"DatabaseSecurityGroup": {
+			"Type": "AWS::EC2::SecurityGroup",
+			"Properties": {
+				"VpcId": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCID"}},
+				"GroupDescription": "Open database access",
+				"SecurityGroupIngress": {
+					"IpProtocol": "tcp",
+					"FromPort": "3306",
+					"ToPort": "3306",
+					"SourceSecurityGroupId": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-WorkSecurityGroupID"}}
+				}
+			}
+		},
 		"DatabaseCluster": {
 			"Type": "AWS::RDS::DBCluster",
 			"Properties": {
@@ -106,7 +119,7 @@
 				"PreferredBackupWindow": "01:00-02:00",
 				"PreferredMaintenanceWindow": "mon:03:00-mon:04:00",
 				"DBSubnetGroupName": { "Ref": "DatabaseSubnetGroup" },
-				"VpcSecurityGroupIds": [{"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-WorkSecurityGroupID"}}]
+				"VpcSecurityGroupIds": [{ "Fn::GetAtt": [ "DatabaseSecurityGroup", "GroupId" ]}]
 			}
 		},
 		"DatabasePrimaryInstance": {
