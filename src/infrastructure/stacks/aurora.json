@@ -118,6 +118,7 @@
 			"Properties": {
 				"DatabaseName": { "Ref": "DatabaseName" },
 				"Engine": "aurora",
+				"EngineVersion": "5.7",
 				"MasterUsername": { "Ref": "DatabaseUsername" },
 				"MasterUserPassword": { "Ref": "DatabasePassword" },
 				"BackupRetentionPeriod": 1,
@@ -227,6 +228,7 @@
 			"Condition": "IsMultiAZ",
 			"Properties": {
 				"Engine": "aurora",
+				"EngineVersion": "5.7",
 				"DBClusterIdentifier": { "Ref": "DatabaseCluster" },
 				"DBInstanceClass": "db.t2.small",
 				"DBSubnetGroupName": { "Ref": "DatabaseSubnetGroup" }
