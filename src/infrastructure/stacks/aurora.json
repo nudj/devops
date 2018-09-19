@@ -131,6 +131,7 @@
 			"Type": "AWS::RDS::DBInstance",
 			"Properties": {
 				"Engine": "aurora",
+				"EngineVersion": "5.7",
 				"DBClusterIdentifier": { "Ref": "DatabaseCluster" },
 				"DBInstanceClass": "db.t2.small",
 				"DBSubnetGroupName": { "Ref": "DatabaseSubnetGroup" }
