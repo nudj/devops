@@ -36,6 +36,10 @@
 			"MinLength": "8",
 			"NoEcho": "true",
 			"Type": "String"
+		},
+		"DatabaseName": {
+			"Description": "The database Name",
+			"Type": "String"
 		}
 	},
 	"Mappings": {
@@ -112,6 +116,7 @@
 		"DatabaseCluster": {
 			"Type": "AWS::RDS::DBCluster",
 			"Properties": {
+				"DatabaseName": { "Ref": "DatabaseName" },
 				"Engine": "aurora",
 				"MasterUsername": { "Ref": "DatabaseUsername" },
 				"MasterUserPassword": { "Ref": "DatabasePassword" },
