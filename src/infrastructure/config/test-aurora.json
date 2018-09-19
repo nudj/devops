@@ -18,5 +18,9 @@
   {
     "ParameterKey": "MultiAZ",
     "ParameterValue": "false"
+  },
+  {
+    "ParameterKey": "DatabaseName",
+    "ParameterValue": "mydatabase"
   }
 ]
