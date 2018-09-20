@@ -1,4 +1,5 @@
 require('envkey')
+console.log('process.env', process.env)
 const { Database } = require('arangojs')
 const knex = require('knex')
 
