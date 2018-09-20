@@ -119,6 +119,7 @@
 				"DatabaseName": { "Ref": "DatabaseName" },
 				"Engine": "aurora-mysql",
 				"EngineVersion": "5.7.12",
+				"DBClusterParameterGroupName": "default.aurora-mysql5.7",
 				"MasterUsername": { "Ref": "DatabaseUsername" },
 				"MasterUserPassword": { "Ref": "DatabasePassword" },
 				"BackupRetentionPeriod": 1,
