@@ -1,0 +1,50 @@
+[
+  {
+    "ParameterKey": "VPCStackName",
+    "ParameterValue": "core-vpc"
+  },
+  {
+    "ParameterKey": "EnvironmentType",
+    "ParameterValue": "test"
+  },
+  {
+    "ParameterKey": "ContainerCpu",
+    "ParameterValue": "256"
+  },
+  {
+    "ParameterKey": "ContainerMemory",
+    "ParameterValue": "512"
+  },
+  {
+    "ParameterKey": "ImageUrl",
+    "ParameterValue": "470250561590.dkr.ecr.eu-west-1.amazonaws.com/nudj/hire:latest"
+  },
+  {
+    "ParameterKey": "ServiceName",
+    "ParameterValue": "hire"
+  },
+  {
+    "ParameterKey": "ContainerPort",
+    "ParameterValue": "80"
+  },
+  {
+    "ParameterKey": "DesiredCount",
+    "ParameterValue": "1"
+  },
+  {
+    "ParameterKey": "ListenerRuleType",
+    "ParameterValue": "host-header"
+  },
+  {
+    "ParameterKey": "ListenerRuleValue",
+    "ParameterValue": "hire.dev.nudj.co"
+  },
+  {
+    "ParameterKey": "ListenerRulePriority",
+    "ParameterValue": "3"
+  },
+  {
+    "ParameterKey": "HealthPing",
+    "ParameterValue": "/healthcheck"
+  }
+]

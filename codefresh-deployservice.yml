@@ -1,0 +1,10 @@
+version: '1.0'
+
+steps:
+
+  deploy_web:
+    image: nudj/devops:aws
+    working_directory: IMAGE_WORK_DIR
+    description: Deploy web service
+    commands:
+      - ./scripts/deploy-service.sh -e test -c web -v core-vpc

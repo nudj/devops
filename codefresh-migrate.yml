@@ -1,0 +1,10 @@
+version: '1.0'
+
+steps:
+
+  migrate:
+    image: nudj/devops:aws
+    working_directory: IMAGE_WORK_DIR
+    commands:
+      - eval $(envkey-source)
+      - ./scripts/execute-remote.sh -p migrate-project
