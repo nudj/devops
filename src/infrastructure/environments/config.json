@@ -46,7 +46,19 @@
         {
           "StackName": "service",
           "Component": "web"
-        }
+        },
+        {
+          "StackName": "service",
+          "Component": "hire"
+        },
+        {
+          "StackName": "service",
+          "Component": "admin"
+        },
+        {
+          "StackName": "service",
+          "Component": "api"
+        },
       ]
     }
   ]
