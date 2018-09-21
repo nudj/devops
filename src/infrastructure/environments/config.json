@@ -58,7 +58,7 @@
         {
           "StackName": "service",
           "Component": "api"
-        },
+        }
       ]
     }
   ]
