@@ -56,6 +56,15 @@
       ]
     }
   },
+  "Mappings" : {
+    "ENVKEYMAP" : {
+      "web"      : { "key": "fooweb" },
+      "hire"     : { "key": "foohire" },
+      "admin"    : { "key": "fooadmin" },
+      "api"      : { "key": "fooapi" },
+      "node-ecr-test": { "key": "foofoo"}
+    }
+  },
   "Resources": {
     "CloudwatchLogsGroup": {
       "Type": "AWS::Logs::LogGroup",
@@ -97,7 +106,7 @@
             "Environment": [
               {
                 "Name": "ENVKEY",
-                "Value": "ajtWe5cY36busuP5ZLoK-5dWLN1yT5j3U9tyf"
+                "Value": { "Fn::FindInMap": [ "ENVKEYMAP", { "Ref": "ServiceName"}, "key" ]}
               }
             ],
             "LogConfiguration": {
