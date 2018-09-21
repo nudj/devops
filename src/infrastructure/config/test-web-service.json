@@ -17,7 +17,7 @@
   },
   {
     "ParameterKey": "ImageUrl",
-    "ParameterValue": "470250561590.dkr.ecr.eu-west-1.amazonaws.com/nudj/web:temp"
+    "ParameterValue": "470250561590.dkr.ecr.eu-west-1.amazonaws.com/nudj/web:latest"
   },
   {
     "ParameterKey": "ServiceName",
@@ -37,7 +37,7 @@
   },
   {
     "ParameterKey": "ListenerRuleValue",
-    "ParameterValue": "web.dev.nudj.co"
+    "ParameterValue": "web.staging.aws.nudj.co"
   },
   {
     "ParameterKey": "ListenerRulePriority",

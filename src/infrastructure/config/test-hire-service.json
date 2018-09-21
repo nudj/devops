@@ -37,7 +37,7 @@
   },
   {
     "ParameterKey": "ListenerRuleValue",
-    "ParameterValue": "hire.dev.nudj.co"
+    "ParameterValue": "hire.staging.aws.nudj.co"
   },
   {
     "ParameterKey": "ListenerRulePriority",
