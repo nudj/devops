@@ -1,0 +1,31 @@
+{
+  "name": "devops",
+  "version": "0.1.0",
+  "description": "nudj devops",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nudj/devops.git"
+  },
+  "author": "Nick Collings",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nudj/devops/issues"
+  },
+  "homepage": "https://github.com/nudj/devops#readme",
+  "dependencies": {
+    "@nudj/library": "6.8.0",
+    "arangojs": "^6.6.0",
+    "aws-sdk": "^2.310.0",
+    "date-fns": "^1.29.0",
+    "envkey": "^1.1.4",
+    "hash-generator": "^0.1.0",
+    "knex": "^0.15.2",
+    "lodash": "^4.17.10",
+    "mysql": "2.16.0",
+    "promise-serial": "^0.1.5"
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Parameters": {
+    "VPCStackName": {
+      "Description": "The name of the target VPC stack to deploy this ELB into",
+      "Type": "String"
+    },
+    "EnvironmentType": {
+      "Type": "String",
+      "Description": "Environment"
+    },
+    "TableName": {
+      "Type": "String",
+      "Description": "The DynamoDB Table name"
+    },
+    "WriteThroughput": {
+      "Type": "String",
+      "Description": "The provisioned write throughput for the DynamoDB table"
+    },
+    "WriteThroughputThreshold": {
+      "Type": "String",
+      "Description": "The provisioned write throughput threshold before alarming for the DynamoDB table"
+    },
+    "ReadThroughput": {
+      "Type": "String",
+      "Description": "The provisioned read throughput for the DynamoDB table"
+    },
+    "ReadThroughputThreshold": {
+      "Type": "String",
+      "Description": "The provisioned read throughput threshold before alarming for the DynamoDB table"
+    },
+    "AlarmSeverity": {
+      "Type": "String"
+    }
+  },
+  "Resources": {
+    "DynamoDBTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": { "Ref": "TableName" },
+        "KeySchema": {
+          "HashKeyElement": {
+            "AttributeName": "id",
+            "AttributeType": "S"
+          },
+          "RangeKeyElement": {
+            "AttributeName": "rev",
+            "AttributeType": "N"
+          }
+        },
+        "ProvisionedThroughput": {
+          "WriteCapacityUnits": {
+            "Ref": "WriteThroughput"
+          },
+          "ReadCapacityUnits": {
+            "Ref": "ReadThroughput"
+          }
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "DynamoDBTableId": {
+      "Description": "The DynamoDB table Physical ID",
+      "Value": {
+        "Ref": "DynamoDBTable"
+      },
+      "Export": {
+        "Name": { "Fn::Sub": "${AWS::StackName}-DynamoDBTableId" }
+      }
+    }
+  }
+}
