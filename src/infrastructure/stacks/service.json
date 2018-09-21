@@ -58,11 +58,11 @@
   },
   "Mappings" : {
     "ENVKEYMAP" : {
-      "web"      : { "key": "fooweb" },
-      "hire"     : { "key": "foohire" },
-      "admin"    : { "key": "fooadmin" },
-      "api"      : { "key": "fooapi" },
-      "node-ecr-test": { "key": "foofoo"}
+      "web"      : { "key": "4weQYHg9XoJjmaacrfjS-34Ag12pCR3AqwVdd" },
+      "hire"     : { "key": "BUkgivC5zAf9JN5dG3Vm-gZBxLGDj3bWjbVyE" },
+      "admin"    : { "key": "KUtm1pXw7jxryEGeG6Z5-4WQpvSdwFv2xQXZk" },
+      "api"      : { "key": "ksx5VJuYXRvagxPDkz73-4vtFfofgvZysFepN" },
+      "node-ecr-test": { "key": "foofoo" }
     }
   },
   "Resources": {

@@ -7,7 +7,10 @@ steps:
     working_directory: IMAGE_WORK_DIR
     description: Delete the VPC
     commands:
-      - sol layer destroy -l service -e test
-      - sol layer destroy -l db -e test
-      - sol layer destroy -l env -e test
-      - sol layer destroy -l core
+      - sol delete-stack -s service -e test -c web
+      - sol delete-stack -s service -e test -c hire
+      - sol delete-stack -s service -e test -c admin
+      # - sol delete-stack -s service -e test -c api
+      # - sol layer destroy -l db -e test
+      # - sol layer destroy -l env -e test
+      # - sol layer destroy -l core
