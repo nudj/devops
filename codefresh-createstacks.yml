@@ -3,7 +3,7 @@ version: '1.0'
 steps:
 
   create_vpc:
-    image: fdearle/sol-tools
+    image: fdearle/sol-tools:test
     working_directory: IMAGE_WORK_DIR
     description: Create the nudj stack
     commands:
