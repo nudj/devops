@@ -17,6 +17,6 @@
   },
   {
     "ParameterKey": "GithubRepo",
-    "ParameterValue": "nudj/devops"
+    "ParameterValue": "https://github.com/nudj/devops.git"
   }
 ]

@@ -13,10 +13,10 @@
   },
   {
     "ParameterKey": "Description",
-    "ParameterValue": "Evacuate Job"
+    "ParameterValue": "Evacuation Job"
   },
   {
     "ParameterKey": "GithubRepo",
-    "ParameterValue": "nudj/devops"
+    "ParameterValue": "https://github.com/nudj/devops.git"
   }
 ]

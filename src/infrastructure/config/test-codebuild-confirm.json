@@ -9,14 +9,14 @@
   },
   {
     "ParameterKey": "ProjectName",
-    "ParameterValue": "config"
+    "ParameterValue": "confirm"
   },
   {
     "ParameterKey": "Description",
-    "ParameterValue": "config Job"
+    "ParameterValue": "Confirmation Job"
   },
   {
     "ParameterKey": "GithubRepo",
-    "ParameterValue": "nudj/devops"
+    "ParameterValue": "https://github.com/nudj/devops.git"
   }
 ]
