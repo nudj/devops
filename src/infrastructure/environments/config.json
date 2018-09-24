@@ -65,6 +65,25 @@
           "Component": "api"
         }
       ]
+    },
+    {
+      "LayerName": "tools",
+      "Depends": "env",
+      "EnvironmentSpecific": true,
+      "Components": [
+        {
+          "StackName": "codebuild",
+          "Component": "migrate"
+        },
+        {
+          "StackName": "codebuild",
+          "Component": "evacuate"
+        },
+        {
+          "StackName": "codebuild",
+          "Component": "confirm"
+        }
+      ]
     }
   ]
 }

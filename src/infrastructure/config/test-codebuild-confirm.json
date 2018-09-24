@@ -1,0 +1,22 @@
+[
+  {
+    "ParameterKey": "VPCStackName",
+    "ParameterValue": "core-vpc"
+  },
+  {
+    "ParameterKey": "EnvironmentType",
+    "ParameterValue": "test"
+  },
+  {
+    "ParameterKey": "ProjectName",
+    "ParameterValue": "config"
+  },
+  {
+    "ParameterKey": "Description",
+    "ParameterValue": "config Job"
+  },
+  {
+    "ParameterKey": "GithubRepo",
+    "ParameterValue": "nudj/devops"
+  }
+]
