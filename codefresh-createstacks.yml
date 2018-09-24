@@ -11,3 +11,4 @@ steps:
       - sol layer build -l env -e test
       - sol layer build -l db -e test
       - sol layer build -l service -e test
+      - sol layer build -l tools -e test
