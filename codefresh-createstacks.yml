@@ -10,7 +10,4 @@ steps:
       - sol layer build -l core
       - sol layer build -l env -e test
       - sol layer build -l db -e test
-      - sol create-stack -s service -e test -c web
-      - sol create-stack -s service -e test -c hire
-      - sol create-stack -s service -e test -c admin
-      - sol create-stack -s service -e test -c api
+      - sol layer build -l service -e test
