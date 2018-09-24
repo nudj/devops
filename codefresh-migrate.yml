@@ -7,4 +7,4 @@ steps:
     working_directory: IMAGE_WORK_DIR
     commands:
       - eval $(envkey-source)
-      - ./scripts/execute-remote.sh -p migrate-project
+      - ./scripts/execute-remote.sh -p core-vpc-test-migrate
