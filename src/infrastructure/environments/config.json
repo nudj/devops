@@ -2,9 +2,10 @@
   "Layers": [
     {
       "LayerName": "core",
-      "Stacks": [
+      "Components": [
         {
-          "StackName": "vpc"
+          "StackName": "vpc",
+          "Component": "vpc"
         }
       ]
     },
@@ -12,17 +13,20 @@
       "LayerName": "env",
       "Depends": "core",
       "EnvironmentSpecific": true,
-      "Stacks": [
+      "Components": [
         {
           "StackName": "ecs",
+          "Component": "ecs",
           "Depends": "alb"
         },
         {
           "StackName": "alb",
+          "Component": "alb",
           "Depends": "env"
         },
         {
-          "StackName": "env"
+          "StackName": "env",
+          "Component": "env"
         }
       ]
     },
@@ -30,9 +34,10 @@
       "LayerName": "db",
       "Depends": "env",
       "EnvironmentSpecific": true,
-      "Stacks": [
+      "Components": [
         {
           "StackName": "aurora",
+          "Component": "aurora",
           "Stateful": true,
           "SnapshotOnTeardown": true
         }
@@ -42,7 +47,7 @@
       "LayerName": "service",
       "Depends": "env",
       "EnvironmentSpecific": true,
-      "Stacks": [
+      "Components": [
         {
           "StackName": "service",
           "Component": "web"
