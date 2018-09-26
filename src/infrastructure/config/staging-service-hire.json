@@ -41,7 +41,7 @@
   },
   {
     "ParameterKey": "ListenerRulePriority",
-    "ParameterValue": "2"
+    "ParameterValue": "3"
   },
   {
     "ParameterKey": "HealthPing",
