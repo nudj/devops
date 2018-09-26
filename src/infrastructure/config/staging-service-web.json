@@ -37,7 +37,7 @@
   },
   {
     "ParameterKey": "ListenerRuleValue",
-    "ParameterValue": "web.staging.nudj.co"
+    "ParameterValue": "web.staging.aws.nudj.co"
   },
   {
     "ParameterKey": "ListenerRulePriority",
