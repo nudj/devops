@@ -8,7 +8,7 @@ steps:
     description: Delete the VPC
     commands:
       - sol layer destroy -l tools -e test
-      # - sol layer destroy -l service -e test
+      - sol layer destroy -l service -e test
       - sol layer destroy -l db -e test
-      # - sol layer destroy -l env -e test
+      - sol layer destroy -l env -e test
       # - sol layer destroy -l core
