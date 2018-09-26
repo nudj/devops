@@ -62,6 +62,7 @@
     },
     "CodeBuildRole": {
       "Type": "AWS::IAM::Role",
+      "DependsOn": "CodeBuildPolicy",
       "Properties": {
         "AssumeRolePolicyDocument": {
           "Version": "2012-10-17",
