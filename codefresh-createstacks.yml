@@ -9,6 +9,6 @@ steps:
     commands:
       - sol layer build -l core
       - sol layer build -l env -e staging
-      # - sol layer build -l db -e staging
+      - sol layer build -l db -e staging
       # - sol layer build -l service -e staging
       # - sol layer build -l tools -e staging
