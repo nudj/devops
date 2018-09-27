@@ -13,6 +13,7 @@ alias d="docker"
 alias dm="docker-machine"
 alias ds="docker-swarm"
 alias dco="docker-compose -p nudj -f ./local/server/docker-compose.yml -f ./local/web/docker-compose.yml -f ./local/hire/docker-compose.yml -f ./local/admin/docker-compose.yml -f ./local/api/docker-compose.yml"
+alias loadEnv="eval $(envkey-source)"
 
 # changes hex 0x15 to delete everything to the left of the cursor,
 # rather than the whole line

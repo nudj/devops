@@ -1,0 +1,14 @@
+[
+  {
+    "ParameterKey": "VPCStackName",
+    "ParameterValue": "nudj-vpc"
+  },
+  {
+    "ParameterKey": "EnvironmentType",
+    "ParameterValue": "prod"
+  },
+  {
+    "ParameterKey": "CertificateArn",
+    "ParameterValue": "your certificate arn for *.nudj.co"
+  }
+]

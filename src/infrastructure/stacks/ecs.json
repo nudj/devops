@@ -1,0 +1,123 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "EC2 Container Service cluster [06-create-ecs]",
+  "Parameters": {
+    "VPCStackName": {
+      "Description": "The name of the target VPC stack to deploy this ELB into",
+      "Type": "String"
+    },
+    "EnvironmentType": {
+      "Description": "Name of the environment to build : demo, development, staging performance or production",
+      "Type": "String",
+      "Default": "prod",
+      "AllowedValues": [
+        "staging", "prod", "test", "demo"
+      ]
+    }
+  },
+  "Resources": {
+    "DockerContainerCluster": {
+      "Type": "AWS::ECS::Cluster",
+      "Properties" : {
+        "ClusterName" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}"}
+      }
+    },
+    "ELBSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "WebSecurityGroup",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "FromPort": -1,
+            "IpProtocol": "-1",
+            "ToPort": -1
+          }
+        ],
+        "SecurityGroupIngress": [
+          {
+            "CidrIp": { "Fn::Sub" : [ "${CIDRROOT}.0.0/16", {"CIDRROOT" : {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCCIDRROOT"}}}]},
+            "FromPort": 80,
+            "IpProtocol": "6",
+            "ToPort": 80
+          }
+        ],
+        "VpcId": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCID"}},
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": { "Fn::Join": ["-", ["sg-elb", { "Ref": "EnvironmentType" } ]] }
+          }
+        ]
+      }
+    },
+    "ECSTaskExecutionRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+          "AssumeRolePolicyDocument": {
+            "Statement": {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ecs-tasks.amazonaws.com"
+              },
+              "Action":  "sts:AssumeRole"
+            }
+          },
+          "Path": "/",
+          "Policies": [
+            {
+              "PolicyName": "AmazonECSTaskExecutionRolePolicy",
+              "PolicyDocument": {
+                "Statement": {
+                  "Effect": "Allow",
+                  "Action": [
+                    "ecr:GetAuthorizationToken",
+                    "ecr:BatchCheckLayerAvailability",
+                    "ecr:GetDownloadUrlForLayer",
+                    "ecr:BatchGetImage",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": "*"
+                }
+              }
+            }
+          ]
+      }
+
+    }
+  },
+  "Outputs": {
+    "DockerCluster": {
+      "Value": {
+        "Ref": "DockerContainerCluster"
+      },
+      "Description": "Docker Cluster Name",
+      "Export": {
+        "Name": {
+          "Fn::Sub": "${VPCStackName}-${EnvironmentType}-DockerCluster"
+        }
+      }
+    },
+    "ECSTaskExecutionRole": {
+      "Value": {
+        "Ref": "ECSTaskExecutionRole"
+      },
+      "Description": "ECS Task Execution Role",
+      "Export": {
+        "Name": {
+          "Fn::Sub": "${VPCStackName}-${EnvironmentType}-ECSTaskExecutionRole"
+        }
+      }
+    },
+    "ECSTaskExecutionRoleArn": {
+      "Value": { "Fn::GetAtt": [ "ECSTaskExecutionRole", "Arn" ] },
+      "Description": "ECS Task Execution Role",
+      "Export": {
+        "Name": {
+          "Fn::Sub": "${VPCStackName}-${EnvironmentType}-ECSTaskExecutionRoleArn"
+        }
+      }
+    }
+  }
+}

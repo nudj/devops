@@ -1,0 +1,14 @@
+version: '1.0'
+
+steps:
+
+  create_vpc:
+    image: fdearle/sol-tools:0.0.1
+    working_directory: IMAGE_WORK_DIR
+    description: Create the nudj stack
+    commands:
+      - sol layer build -l core
+      - sol layer build -l env -e staging
+      - sol layer build -l db -e staging
+      - sol layer build -l service -e staging
+      - sol layer build -l tools -e staging

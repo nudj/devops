@@ -1,0 +1,89 @@
+{
+  "Layers": [
+    {
+      "LayerName": "core",
+      "Components": [
+        {
+          "StackName": "vpc",
+          "Component": "vpc"
+        }
+      ]
+    },
+    {
+      "LayerName": "env",
+      "Depends": "core",
+      "EnvironmentSpecific": true,
+      "Components": [
+        {
+          "StackName": "ecs",
+          "Component": "ecs",
+          "Depends": "alb"
+        },
+        {
+          "StackName": "alb",
+          "Component": "alb",
+          "Depends": "env"
+        },
+        {
+          "StackName": "env",
+          "Component": "env"
+        }
+      ]
+    },
+    {
+      "LayerName": "db",
+      "Depends": "env",
+      "EnvironmentSpecific": true,
+      "Components": [
+        {
+          "StackName": "aurora",
+          "Component": "aurora",
+          "Stateful": true,
+          "SnapshotOnTeardown": true
+        }
+      ]
+    },
+    {
+      "LayerName": "service",
+      "Depends": "env",
+      "EnvironmentSpecific": true,
+      "Components": [
+        {
+          "StackName": "service",
+          "Component": "web"
+        },
+        {
+          "StackName": "service",
+          "Component": "hire"
+        },
+        {
+          "StackName": "service",
+          "Component": "admin"
+        },
+        {
+          "StackName": "service",
+          "Component": "api"
+        }
+      ]
+    },
+    {
+      "LayerName": "tools",
+      "Depends": "env",
+      "EnvironmentSpecific": true,
+      "Components": [
+        {
+          "StackName": "codebuild",
+          "Component": "migrate"
+        },
+        {
+          "StackName": "codebuild",
+          "Component": "evacuate"
+        },
+        {
+          "StackName": "codebuild",
+          "Component": "confirm"
+        }
+      ]
+    }
+  ]
+}

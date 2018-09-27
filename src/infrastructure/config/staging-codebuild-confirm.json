@@ -1,0 +1,22 @@
+[
+  {
+    "ParameterKey": "VPCStackName",
+    "ParameterValue": "core-vpc"
+  },
+  {
+    "ParameterKey": "EnvironmentType",
+    "ParameterValue": "staging"
+  },
+  {
+    "ParameterKey": "ProjectName",
+    "ParameterValue": "confirm"
+  },
+  {
+    "ParameterKey": "Description",
+    "ParameterValue": "Confirmation Job"
+  },
+  {
+    "ParameterKey": "GithubRepo",
+    "ParameterValue": "https://github.com/nudj/devops.git"
+  }
+]

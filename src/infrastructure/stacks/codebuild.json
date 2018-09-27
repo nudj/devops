@@ -1,0 +1,151 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "CodeBuild project",
+  "Parameters": {
+    "VPCStackName": {
+      "Description": "The name of the target VPC stack to deploy this ELB into",
+      "Type": "String"
+    },
+    "ProjectName": {
+      "Description": "The name of the Project to Create",
+      "Type": "String"
+    },
+    "Description": {
+      "Description": "The Description of the Project to Create",
+      "Type": "String"
+    },
+    "GithubRepo": {
+      "Description": "The Where to get the code",
+      "Type": "String"
+    },
+    "EnvironmentType": {
+      "Description": "Name of the environment to build : demo, development, staging performance or production",
+      "Type": "String",
+      "Default": "prod",
+      "AllowedValues": [
+        "staging", "prod", "test", "demo"
+      ]
+    }
+  },
+  "Resources": {
+    "CodeBuildProject": {
+      "Type": "AWS::CodeBuild::Project",
+      "DependsOn": "CodeBuildRole",
+      "Properties": {
+        "Name": { "Fn::Sub" : "${VPCStackName}-${EnvironmentType}-${ProjectName}"},
+        "Description": { "Ref": "Description" },
+        "TimeoutInMinutes": "5",
+        "ServiceRole": { "Ref": "CodeBuildRole"},
+        "Artifacts": {
+          "Type": "NO_ARTIFACTS"
+        },
+        "Cache": {
+          "Type": "S3",
+          "Location": { "Ref": "CacheBucket"}
+        },
+        "Environment": {
+          "ComputeType": "BUILD_GENERAL1_SMALL",
+          "Image": "aws/codebuild/nodejs:8.11.0",
+          "Type": "LINUX_CONTAINER"
+        },
+        "Source": {
+          "Type": "GITHUB",
+          "Location": { "Ref": "GithubRepo" },
+          "GitCloneDepth": 1
+        },
+        "VpcConfig": {
+          "VpcId": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCID"}},
+          "Subnets": [ {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-Subnet1WorkID"}}, {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-Subnet2WorkID"}} ],
+          "SecurityGroupIds": [ {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-WorkSecurityGroupID"}} ]
+        }
+      }
+    },
+    "CodeBuildRole": {
+      "Type": "AWS::IAM::Role",
+      "DependsOn": "CodeBuildPolicy",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "codebuild.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+      }
+    },
+    "CodeBuildPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "Roles": [ { "Ref": "CodeBuildRole" }],
+        "PolicyName": "codebuild",
+        "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Resource": [
+                  "*"
+                ],
+                "Action": [
+                  "logs:CreateLogGroup",
+                  "logs:CreateLogStream",
+                  "logs:PutLogEvents"
+                ]
+              },
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "ec2:CreateNetworkInterface",
+                  "ec2:DescribeDhcpOptions",
+                  "ec2:DescribeNetworkInterfaces",
+                  "ec2:DeleteNetworkInterface",
+                  "ec2:DescribeSubnets",
+                  "ec2:DescribeSecurityGroups",
+                  "ec2:DescribeVpcs"
+                ],
+                "Resource": "*"
+              },
+              {
+                  "Effect": "Allow",
+                  "Action": [
+                      "ec2:CreateNetworkInterfacePermission"
+                  ],
+                  "Resource": { "Fn::Sub": "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:network-interface/*" },
+                  "Condition": {
+                      "StringEquals": {
+                          "ec2:Subnet": [
+                            { "Fn::Join": [ "", [{ "Fn::Sub": "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/"}, {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-Subnet1WorkID"}}]]},
+                            { "Fn::Join": [ "", [{ "Fn::Sub": "arn:aws:ec2:${AWS::Region}:${AWS::AccountId}:subnet/"}, {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-Subnet2WorkID"}}]]}
+                          ],
+                          "ec2:AuthorizedService": "codebuild.amazonaws.com"
+                      }
+                  }
+              },
+              {
+                 "Effect": "Allow",
+                 "Action": [
+                   "s3:*"
+                 ],
+                 "Resource": [
+                   { "Fn::GetAtt": [ "CacheBucket", "Arn" ]},
+                   { "Fn::Join": [ "", [ { "Fn::GetAtt": [ "CacheBucket", "Arn" ]}, "/*"]]}
+                 ]
+              }
+            ]
+          }
+
+        }
+    },
+    "CacheBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties" : {
+        "AccessControl": "Private"
+      }
+    },
+  }
+}

@@ -1,0 +1,350 @@
+{
+	"AWSTemplateFormatVersion": "2010-09-09",
+	"Description": "A basic CloudFormation template for an RDS Aurora cluster.\n",
+	"Parameters": {
+		"VPCStackName": {
+      "Description": "The name of the target VPC stack to deploy this ELB into",
+      "Type": "String"
+    },
+    "EnvironmentType": {
+      "Description": "Name of the environment to build : demo, development, staging performance or production",
+      "Type": "String",
+      "Default": "perf",
+      "AllowedValues": [
+        "staging", "prod", "test", "demo", "perf", "feat1", "feat2", "feat3", "feat4", "feat5", "feat6"
+      ]
+    },
+		"MultiAZ": {
+				"Description": "Multi Availability Zone Support",
+				"Type": "String",
+				"Default": "false",
+				"AllowedValues" : ["true", "false"]
+		},
+		"DatabaseUsername": {
+			"AllowedPattern": "[a-zA-Z0-9]+",
+			"ConstraintDescription": "must be between 1 to 16 alphanumeric characters.",
+			"Description": "The database admin account user name, between 1 to 16 alphanumeric characters.",
+			"MaxLength": "16",
+			"MinLength": "1",
+			"Type": "String"
+		},
+		"DatabasePassword": {
+			"AllowedPattern": "[a-zA-Z0-9]+",
+			"ConstraintDescription": "must be between 8 to 41 alphanumeric characters.",
+			"Description": "The database admin account password, between 8 to 41 alphanumeric characters.",
+			"MaxLength": "41",
+			"MinLength": "8",
+			"NoEcho": "true",
+			"Type": "String"
+		},
+		"DatabaseName": {
+			"Description": "The database Name",
+			"Type": "String"
+		}
+	},
+	"Mappings": {
+		"000000000000": {
+			"us-east-1": {
+				"Subnets": [
+					"subnet-00000000",
+					"subnet-11111111",
+					"subnet-22222222"
+				],
+				"SecurityGroups": [
+					"sg-00000000"
+				],
+				"InstanceType": "db.r4.large",
+				"BackupRetentionPeriod": 7
+			}
+		}
+	},
+	"Metadata": {
+		"AWS::CloudFormation::Interface": {
+			"ParameterGroups": [
+				{
+					"Label": {
+						"default": "Database Configuration"
+					},
+					"Parameters": [
+						"DatabaseUsername",
+						"DatabasePassword"
+					]
+				}
+			],
+			"ParameterLabels": {
+				"DatabaseUsername": {
+					"default": "Database Username"
+				},
+				"DatabasePassword": {
+					"default": "Database Password"
+				}
+			}
+		}
+	},
+	"Conditions" : {
+			"IsMultiAZ" : {
+					"Fn::Equals" : [ {"Ref" : "MultiAZ"}, "true" ]
+			}
+	},
+	"Resources": {
+		"StackAlarmTopic": {
+			"Type": "AWS::SNS::Topic",
+			"Properties": {
+				"DisplayName": "Stack Alarm Topic"
+			}
+		},
+		"DatabaseSubnetGroup": {
+			"Type": "AWS::RDS::DBSubnetGroup",
+			"Properties": {
+				"DBSubnetGroupDescription": "CloudFormation managed DB subnet group.",
+				"SubnetIds": [ {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-Subnet1WorkID"}}, {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-Subnet2WorkID"}} ]
+			}
+		},
+		"DatabaseSecurityGroup": {
+			"Type": "AWS::EC2::SecurityGroup",
+			"Properties": {
+				"VpcId": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCID"}},
+				"GroupDescription": "Open database access",
+				"SecurityGroupIngress": {
+					"IpProtocol": "tcp",
+					"FromPort": "3306",
+					"ToPort": "3306",
+					"SourceSecurityGroupId": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-WorkSecurityGroupID"}}
+				}
+			}
+		},
+		"DatabaseCluster": {
+			"Type": "AWS::RDS::DBCluster",
+			"Properties": {
+				"DatabaseName": { "Ref": "DatabaseName" },
+				"Engine": "aurora-mysql",
+				"EngineVersion": "5.7.12",
+				"DBClusterParameterGroupName": "default.aurora-mysql5.7",
+				"MasterUsername": { "Ref": "DatabaseUsername" },
+				"MasterUserPassword": { "Ref": "DatabasePassword" },
+				"BackupRetentionPeriod": 1,
+				"PreferredBackupWindow": "01:00-02:00",
+				"PreferredMaintenanceWindow": "mon:03:00-mon:04:00",
+				"DBSubnetGroupName": { "Ref": "DatabaseSubnetGroup" },
+				"VpcSecurityGroupIds": [{ "Fn::GetAtt": [ "DatabaseSecurityGroup", "GroupId" ]}]
+			}
+		},
+		"DatabasePrimaryInstance": {
+			"Type": "AWS::RDS::DBInstance",
+			"Properties": {
+				"Engine": "aurora-mysql",
+				"EngineVersion": "5.7.12",
+				"DBClusterIdentifier": { "Ref": "DatabaseCluster" },
+				"DBInstanceClass": "db.t2.small",
+				"DBSubnetGroupName": { "Ref": "DatabaseSubnetGroup" }
+			}
+		},
+		"DatabasePrimaryCPUAlarm": {
+			"Type": "AWS::CloudWatch::Alarm",
+			"Properties": {
+				"AlarmDescription": "Primary database CPU utilization is over 80%.",
+				"Namespace": "AWS/RDS",
+				"MetricName": "CPUUtilization",
+				"Unit": "Percent",
+				"Statistic": "Average",
+				"Period": 300,
+				"EvaluationPeriods": 2,
+				"Threshold": 80,
+				"ComparisonOperator": "GreaterThanOrEqualToThreshold",
+				"Dimensions": [
+					{
+						"Name": "DBInstanceIdentifier",
+						"Value": { "Ref": "DatabasePrimaryInstance" }
+					}
+				],
+				"AlarmActions": [
+					{
+						"Ref": "StackAlarmTopic"
+					}
+				],
+				"InsufficientDataActions": [
+					{
+						"Ref": "StackAlarmTopic"
+					}
+				]
+			}
+		},
+		"DatabasePrimaryMemoryAlarm": {
+			"Type": "AWS::CloudWatch::Alarm",
+			"Properties": {
+				"AlarmDescription": "Primary database freeable memory is under 700MB.",
+				"Namespace": "AWS/RDS",
+				"MetricName": "FreeableMemory",
+				"Unit": "Bytes",
+				"Statistic": "Average",
+				"Period": 300,
+				"EvaluationPeriods": 2,
+				"Threshold": 700000000,
+				"ComparisonOperator": "LessThanOrEqualToThreshold",
+				"Dimensions": [
+					{
+						"Name": "DBInstanceIdentifier",
+						"Value": { "Ref": "DatabasePrimaryInstance" }
+					}
+				],
+				"AlarmActions": [
+					{
+						"Ref": "StackAlarmTopic"
+					}
+				],
+				"InsufficientDataActions": [
+					{
+						"Ref": "StackAlarmTopic"
+					}
+				]
+			}
+		},
+		"DatabasePrimaryReplicationAlarm": {
+			"Type": "AWS::CloudWatch::Alarm",
+			"Properties": {
+				"AlarmDescription": "Database replication latency is over 200ms.",
+				"Namespace": "AWS/RDS",
+				"MetricName": "AuroraReplicaLag",
+				"Unit": "Milliseconds",
+				"Statistic": "Average",
+				"Period": 300,
+				"EvaluationPeriods": 2,
+				"Threshold": 200,
+				"ComparisonOperator": "GreaterThanOrEqualToThreshold",
+				"Dimensions": [
+					{
+						"Name": "DBInstanceIdentifier",
+						"Value": { "Ref": "DatabasePrimaryInstance" }
+					}
+				],
+				"AlarmActions": [
+					{
+						"Ref": "StackAlarmTopic"
+					}
+				]
+			}
+		},
+		"DatabaseReplicaInstance": {
+			"Type": "AWS::RDS::DBInstance",
+			"Condition": "IsMultiAZ",
+			"Properties": {
+				"Engine": "aurora-mysql",
+				"EngineVersion": "5.7.12",
+				"DBClusterIdentifier": { "Ref": "DatabaseCluster" },
+				"DBInstanceClass": "db.t2.small",
+				"DBSubnetGroupName": { "Ref": "DatabaseSubnetGroup" }
+			}
+		},
+		"DatabaseReplicaCPUAlarm": {
+			"Type": "AWS::CloudWatch::Alarm",
+			"Condition": "IsMultiAZ",
+			"Properties": {
+				"AlarmDescription": "Replica database CPU utilization is over 80%.",
+				"Namespace": "AWS/RDS",
+				"MetricName": "CPUUtilization",
+				"Unit": "Percent",
+				"Statistic": "Average",
+				"Period": 300,
+				"EvaluationPeriods": 2,
+				"Threshold": 80,
+				"ComparisonOperator": "GreaterThanOrEqualToThreshold",
+				"Dimensions": [
+					{
+						"Name": "DBInstanceIdentifier",
+						"Value": { "Ref": "DatabaseReplicaInstance" }
+					}
+				],
+				"AlarmActions": [
+					{
+						"Ref": "StackAlarmTopic"
+					}
+				],
+				"InsufficientDataActions": [
+					{
+						"Ref": "StackAlarmTopic"
+					}
+				]
+			}
+		},
+		"DatabaseReplicaMemoryAlarm": {
+			"Type": "AWS::CloudWatch::Alarm",
+			"Condition": "IsMultiAZ",
+			"Properties": {
+				"AlarmDescription": "Replica database freeable memory is under 700MB.",
+				"Namespace": "AWS/RDS",
+				"MetricName": "FreeableMemory",
+				"Unit": "Bytes",
+				"Statistic": "Average",
+				"Period": 300,
+				"EvaluationPeriods": 2,
+				"Threshold": 700000000,
+				"ComparisonOperator": "LessThanOrEqualToThreshold",
+				"Dimensions": [
+					{
+						"Name": "DBInstanceIdentifier",
+						"Value": { "Ref": "DatabaseReplicaInstance" }
+					}
+				],
+				"AlarmActions": [
+					{
+						"Ref": "StackAlarmTopic"
+					}
+				],
+				"InsufficientDataActions": [
+					{
+						"Ref": "StackAlarmTopic"
+					}
+				]
+			}
+		},
+		"DatabaseReplicaReplicationAlarm": {
+			"Type": "AWS::CloudWatch::Alarm",
+			"Condition": "IsMultiAZ",
+			"Properties": {
+				"AlarmDescription": "Database replication latency is over 200ms.",
+				"Namespace": "AWS/RDS",
+				"MetricName": "AuroraReplicaLag",
+				"Unit": "Milliseconds",
+				"Statistic": "Average",
+				"Period": 300,
+				"EvaluationPeriods": 2,
+				"Threshold": 200,
+				"ComparisonOperator": "GreaterThanOrEqualToThreshold",
+				"Dimensions": [
+					{
+						"Name": "DBInstanceIdentifier",
+						"Value": { "Ref": "DatabaseReplicaInstance" }
+					}
+				],
+				"AlarmActions": [
+					{
+						"Ref": "StackAlarmTopic"
+					}
+				]
+			}
+		}
+	},
+	"Outputs" : {
+    "DatabaseClusterEndpointAddress": {
+			"Value": { "Fn::GetAtt": ["DatabaseCluster", "Endpoint.Address" ]},
+      "Description": "DatabaseCluster Endpoint Address",
+      "Export" : {
+        "Name" : { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-EndpointAddress" }
+      }
+    },
+		"DatabaseClusterEndpointPort": {
+			"Value": { "Fn::GetAtt": ["DatabaseCluster", "Endpoint.Port" ]},
+      "Description": "DatabaseCluster Endpoint Port",
+      "Export" : {
+        "Name" : { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-EndpointPort" }
+      }
+    },
+		"DatabaseClusterReadEndpointAddress": {
+			"Value": { "Fn::GetAtt": ["DatabaseCluster", "ReadEndpoint.Address" ]},
+      "Description": "DatabaseCluster Read Endpoint Address",
+      "Export" : {
+        "Name" : { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-ReadEndpointAddress" }
+      }
+    }
+  }
+}

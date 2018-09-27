@@ -1,0 +1,14 @@
+[
+  {
+    "ParameterKey": "VPCStackName",
+    "ParameterValue": "core-vpc"
+  },
+  {
+    "ParameterKey": "EnvironmentType",
+    "ParameterValue": "staging"
+  },
+  {
+    "ParameterKey": "CertificateArn",
+    "ParameterValue": "your certificate arn for *.staging.aws.nudj.co"
+  }
+]
