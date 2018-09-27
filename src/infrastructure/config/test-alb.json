@@ -6,5 +6,9 @@
   {
     "ParameterKey": "EnvironmentType",
     "ParameterValue": "test"
+  },
+  {
+    "ParameterKey": "CertificateArn",
+    "ParameterValue": "your certificate arn for *.dev.aws.nudj.co"
   }
 ]

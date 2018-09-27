@@ -46,6 +46,7 @@
         },
         "VPCDHCPOptionsAssociation": {
             "Type": "AWS::EC2::VPCDHCPOptionsAssociation",
+            "DependsOn": "VPC",
             "Properties": {
                 "VpcId": {
                     "Ref": "VPC"
@@ -68,6 +69,7 @@
         },
         "VPCGatewayAttachment": {
             "Type": "AWS::EC2::VPCGatewayAttachment",
+            "DependsOn": "InternetGateway",
             "Properties": {
                 "VpcId": {
                     "Ref": "VPC"
@@ -79,6 +81,7 @@
         },
         "PublicSubnet1": {
             "Type": "AWS::EC2::Subnet",
+            "DependsOn": "VPC",
             "Properties": {
                 "VpcId": {
                     "Ref": "VPC"
@@ -113,6 +116,7 @@
         },
         "PublicSubnet2": {
             "Type": "AWS::EC2::Subnet",
+            "DependsOn": "VPC",
             "Properties": {
                 "VpcId": {
                     "Ref": "VPC"
@@ -173,6 +177,7 @@
             }
         },
         "PublicSubnet1RouteTableAssociation": {
+            "DependsOn": ["PublicSubnet1", "PublicSubnetRouteTable"],
             "Type": "AWS::EC2::SubnetRouteTableAssociation",
             "Properties": {
                 "SubnetId": {
@@ -184,6 +189,7 @@
             }
         },
         "PublicSubnet2RouteTableAssociation": {
+            "DependsOn": ["PublicSubnet2", "PublicSubnetRouteTable"],
             "Type": "AWS::EC2::SubnetRouteTableAssociation",
             "Properties": {
                 "SubnetId": {
@@ -202,6 +208,7 @@
             }
         },
         "NATGateway1": {
+            "DependsOn": "PublicSubnet1",
             "Type": "AWS::EC2::NatGateway",
             "Properties": {
                 "AllocationId": {
@@ -216,6 +223,7 @@
             }
         },
         "CloudfrontHttp": {
+            "DependsOn": "VPC",
             "Type": "AWS::EC2::SecurityGroup",
             "Properties": {
                 "GroupDescription": "cloudfront-http-ip-ranges",
@@ -247,6 +255,7 @@
             }
         },
         "CloudfrontHttps": {
+            "DependsOn": "VPC",
             "Type": "AWS::EC2::SecurityGroup",
             "Properties": {
                 "GroupDescription": "cloudfront-https-ip-ranges",
