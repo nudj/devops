@@ -323,5 +323,28 @@
 				]
 			}
 		}
-	}
+	},
+	"Outputs" : {
+    "DatabaseClusterEndpointAddress": {
+			"Value": { "Fn::GetAtt": ["DatabaseCluster", "Endpoint.Address" ]},
+      "Description": "DatabaseCluster Endpoint Address",
+      "Export" : {
+        "Name" : { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-EndpointAddress" }
+      }
+    },
+		"DatabaseClusterEndpointPort": {
+			"Value": { "Fn::GetAtt": ["DatabaseCluster", "Endpoint.Port" ]},
+      "Description": "DatabaseCluster Endpoint Port",
+      "Export" : {
+        "Name" : { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-EndpointPort" }
+      }
+    },
+		"DatabaseClusterReadEndpointAddress": {
+			"Value": { "Fn::GetAtt": ["DatabaseCluster", "ReadEndpoint.Address" ]},
+      "Description": "DatabaseCluster Read Endpoint Address",
+      "Export" : {
+        "Name" : { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-ReadEndpointAddress" }
+      }
+    }
+  }
 }
