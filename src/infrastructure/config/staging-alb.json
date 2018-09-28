@@ -9,6 +9,6 @@
   },
   {
     "ParameterKey": "CertificateArn",
-    "ParameterValue": "your certificate arn for *.staging.aws.nudj.co"
+    "ParameterValue": "arn:aws:acm:eu-west-1:470250561590:certificate/6d4a2c98-58a6-4145-b3b7-3b762fe2e405"
   }
 ]
