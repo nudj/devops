@@ -13,10 +13,6 @@
       "AllowedValues": [
         "staging", "prod", "test", "demo", "perf", "feat1", "feat2", "feat3", "feat4", "feat5", "feat6"
       ]
-    },
-    "CertificateArn": {
-      "Description": "Certificate Arn for the cert for this Environment e.g. *.staging.aws.nudj.co",
-      "Type": "String"
     }
   },
   "Resources" : {
@@ -46,25 +42,6 @@
         },
         "Port": "80",
         "Protocol": "HTTP"
-      }
-    },
-    "WebALBHttpsListener": {
-      "Type": "AWS::ElasticLoadBalancingV2::Listener",
-      "Properties": {
-        "DefaultActions": [
-          {
-              "Type": "forward",
-              "TargetGroupArn": {
-              "Ref": "WebTargetGroup"
-            }
-          }
-        ],
-        "LoadBalancerArn": {
-          "Ref": "WebALB"
-        },
-        "Port": "443",
-        "Protocol": "HTTPS",
-        "Certificates": [{"CertificateArn": { "Ref": "CertificateArn" }}]
       }
     },
     "WebTargetGroup": {
