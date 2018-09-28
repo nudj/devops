@@ -216,7 +216,7 @@
           }
         ],
         "Priority": { "Ref": "ListenerRulePriority"},
-        "ListenerArn": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-WebALBHttpListener"}}
+        "ListenerArn": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-WebALBHttpsListener"}}
       }
     }
   }

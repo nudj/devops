@@ -94,9 +94,16 @@
     },
     "WebALBHttpListener" : {
       "Value": { "Ref":"WebALBHttpListener"},
-      "Description": "Name of Web ALB",
+      "Description": "Listener for HTTP",
       "Export" : {
         "Name" : { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebALBHttpListener" }
+      }
+    },
+    "WebALBHttpsListener" : {
+      "Value": { "Ref":"WebALBHttpsListener"},
+      "Description": "Listener for HTTPS",
+      "Export" : {
+        "Name" : { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebALBHttspListener" }
       }
     },
     "WebALBDomain": {
