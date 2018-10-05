@@ -42,22 +42,6 @@
 			"Type": "String"
 		}
 	},
-	"Mappings": {
-		"000000000000": {
-			"us-east-1": {
-				"Subnets": [
-					"subnet-00000000",
-					"subnet-11111111",
-					"subnet-22222222"
-				],
-				"SecurityGroups": [
-					"sg-00000000"
-				],
-				"InstanceType": "db.r4.large",
-				"BackupRetentionPeriod": 7
-			}
-		}
-	},
 	"Metadata": {
 		"AWS::CloudFormation::Interface": {
 			"ParameterGroups": [

@@ -1,0 +1,14 @@
+"Environment": [
+  {
+    "Name": "ENVKEY",
+    "Value": "{{resolve:ssm:STAGING-ENVKEY:1}}"
+  },
+  {
+    "Name": "EndpointAddress",
+    "Value": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-EndpointAddress"}}
+  },
+  {
+    "Name": "EndpointPort",
+    "Value": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-EndpointPort"}}
+  }
+]
