@@ -1,7 +1,7 @@
 "Environment": [
   {
     "Name": "ENVKEY",
-    "Value": "{{resolve:ssm:STAGING-ENVKEY:1}}"
+    "Value": "{{resolve:ssm:staging-api-envkey:1}}"
   },
   {
     "Name": "EndpointAddress",

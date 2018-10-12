@@ -49,7 +49,7 @@
   },
   {
     "ParameterKey": "EnvBucket",
-    "ParameterValue": "S3 bucket in Nudj account. Should have read/write from account only"
+    "ParameterValue": "stack-o-later-environment-cache"
   },
   {
     "ParameterKey": "Protocol",
