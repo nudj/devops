@@ -54,15 +54,23 @@
       "AllowedValues": [
         "staging", "prod", "test", "demo"
       ]
+    },
+    "Protocol": {
+      "Description": "Which protocol should we use for this service? HTTP or HTTPS",
+      "Type": "String",
+      "Default": "HTTPS",
+      "AllowedValues": [
+        "HTTP","HTTPS"
+      ]
+    },
+    "EnvBucket": {
+      "Description": "Bucket For CloudFormation transform snippet",
+      "Type": "String"
     }
   },
-  "Mappings" : {
-    "ENVKEYMAP" : {
-      "web"      : { "key": "4weQYHg9XoJjmaacrfjS-34Ag12pCR3AqwVdd" },
-      "hire"     : { "key": "BUkgivC5zAf9JN5dG3Vm-gZBxLGDj3bWjbVyE" },
-      "admin"    : { "key": "KUtm1pXw7jxryEGeG6Z5-4WQpvSdwFv2xQXZk" },
-      "api"      : { "key": "ksx5VJuYXRvagxPDkz73-4vtFfofgvZysFepN" },
-      "node-ecr-test": { "key": "foofoo" }
+  "Conditions": {
+    "UseHTTPS" : {
+        "Fn::Equals" : [ {"Ref" : "Protocol"}, "HTTPS" ]
     }
   },
   "Resources": {
@@ -103,12 +111,12 @@
                 "ContainerPort": { "Ref": "ContainerPort" }
               }
             ],
-            "Environment": [
-              {
-                "Name": "ENVKEY",
-                "Value": { "Fn::FindInMap": [ "ENVKEYMAP", { "Ref": "ServiceName"}, "key" ]}
-              }
-            ],
+            "Fn::Transform": {
+               "Name": "AWS::Include",
+               "Parameters": {
+                 "Location": { "Ref": "EnvBucket" }
+               }
+            },
             "LogConfiguration": {
               "LogDriver": "awslogs",
               "Options": {
@@ -120,7 +128,7 @@
                 },
                 "awslogs-stream-prefix": "ecs-content"
               }
-            },
+            }
           }
         ]
       }
@@ -186,7 +194,7 @@
       "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
       "Properties": {
         "HealthCheckIntervalSeconds": 30,
-        "HealthCheckPath": "/healthcheck",
+        "HealthCheckPath": { "Ref": "HealthPing" },
         "HealthCheckProtocol": "HTTP",
         "HealthCheckTimeoutSeconds": 10,
         "HealthyThresholdCount": 2,
@@ -216,7 +224,13 @@
           }
         ],
         "Priority": { "Ref": "ListenerRulePriority"},
-        "ListenerArn": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-WebALBHttspListener"}}
+        "ListenerArn": { "Fn::If":
+          [
+            "UseHTTPS",
+            {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-WebALBHttpsListener"}},
+            {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-WebALBHttpListener"}}
+          ]
+        }
       }
     }
   }

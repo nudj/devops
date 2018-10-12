@@ -46,5 +46,13 @@
   {
     "ParameterKey": "HealthPing",
     "ParameterValue": "/healthcheck"
+  },
+  {
+    "ParameterKey": "EnvBucket",
+    "ParameterValue": "S3 bucket in Nudj account. Should have read/write from account only"
+  },
+  {
+    "ParameterKey": "Protocol",
+    "ParameterValue": "HTTPS"
   }
 ]

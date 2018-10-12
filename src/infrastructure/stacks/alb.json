@@ -17,6 +17,14 @@
     "CertificateArn": {
       "Description": "Certificate Arn for the cert for this Environment e.g. *.staging.aws.nudj.co",
       "Type": "String"
+    },
+    "UseHTTPS": {
+      "AllowedValues": [
+        "true", "false"
+      ],
+      "Default": "true",
+      "Type": "String",
+      "Description": "Use HTTPS for ALB"
     }
   },
   "Resources" : {
@@ -103,7 +111,7 @@
       "Value": { "Ref":"WebALBHttpsListener"},
       "Description": "Listener for HTTPS",
       "Export" : {
-        "Name" : { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebALBHttspListener" }
+        "Name" : { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebALBHttpsListener" }
       }
     },
     "WebALBDomain": {

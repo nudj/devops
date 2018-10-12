@@ -30,7 +30,7 @@
   "Resources": {
     "CodeBuildProject": {
       "Type": "AWS::CodeBuild::Project",
-      "DependsOn": "CodeBuildRole",
+      "DependsOn": "CodeBuildPolicy",
       "Properties": {
         "Name": { "Fn::Sub" : "${VPCStackName}-${EnvironmentType}-${ProjectName}"},
         "Description": { "Ref": "Description" },
@@ -80,6 +80,7 @@
     },
     "CodeBuildPolicy": {
       "Type": "AWS::IAM::Policy",
+      "DependsOn": "CodeBuildRole",
       "Properties": {
         "Roles": [ { "Ref": "CodeBuildRole" }],
         "PolicyName": "codebuild",

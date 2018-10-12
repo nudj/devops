@@ -41,6 +41,8 @@
             "Type": "AWS::EC2::VPC",
             "Properties": {
                 "CidrBlock": { "Fn::Sub": "${VPCCIDRROOT}.0.0/16" },
+                "EnableDnsSupport": "true",
+                "EnableDnsHostnames": "true",
                 "Tags" : [ {"Key" : "Name", "Value" : { "Ref": "AWS::StackName" }} ]
             }
         },
@@ -151,6 +153,7 @@
         },
         "PublicSubnetRouteTable": {
             "Type": "AWS::EC2::RouteTable",
+            "DependsOn": "VPC",
             "Properties": {
                 "VpcId": {
                     "Ref": "VPC"
