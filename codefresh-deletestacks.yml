@@ -3,7 +3,7 @@ version: '1.0'
 steps:
 
   delete_vpc:
-    image: fdearle/sol-tools:0.0.3
+    image: fdearle/sol-tools:0.0.4
     working_directory: IMAGE_WORK_DIR
     description: Delete the VPC
     commands:
