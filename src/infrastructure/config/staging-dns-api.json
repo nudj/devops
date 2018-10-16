@@ -1,0 +1,22 @@
+[
+  {
+    "ParameterKey": "VPCStackName",
+    "ParameterValue": "core-vpc"
+  },
+  {
+    "ParameterKey": "EnvironmentType",
+    "ParameterValue": "staging"
+  },
+  {
+    "ParameterKey": "ServiceName",
+    "ParameterValue": "admin"
+  },
+  {
+    "ParameterKey": "HostedZoneName",
+    "ParameterValue": "aws.nudj.co."
+  },
+  {
+    "ParameterKey": "HostedZoneID",
+    "ParameterValue": "Z17ZKK7DWSFC5S"
+  }
+]

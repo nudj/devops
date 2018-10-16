@@ -44,6 +44,40 @@
       ]
     },
     {
+      "LayerName": "keep",
+      "Depends": "env",
+      "EnvironmentSpecific": true,
+      "Components": [
+        {
+          "StackName": "keep",
+          "Component": "keep"
+        }
+      ]
+    },
+    {
+      "LayerName": "dns",
+      "Depends": "env",
+      "EnvironmentSpecific": true,
+      "Components": [
+        {
+          "StackName": "dns",
+          "Component": "web"
+        },
+        {
+          "StackName": "dns",
+          "Component": "hire"
+        },
+        {
+          "StackName": "dns",
+          "Component": "admin"
+        },
+        {
+          "StackName": "dns",
+          "Component": "api"
+        }
+      ]
+    },
+    {
       "LayerName": "service",
       "Depends": "env",
       "EnvironmentSpecific": true,

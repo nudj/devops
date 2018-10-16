@@ -1,0 +1,87 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Install a keep server in the public subnet of the VPC",
+    "Parameters": {
+      "VPCStackName": {
+        "Description": "The name of the target VPC stack to deploy this ELB into",
+        "Type": "String"
+      },
+      "EnvironmentType": {
+        "Description": "Name of the environment to build : demo, development, staging performance or production",
+        "Type": "String",
+        "Default": "perf",
+        "AllowedValues": [
+          "staging", "prod", "test", "demo", "perf", "feat1", "feat2", "feat3", "feat4", "feat5", "feat6"
+        ]
+      },
+      "KeyPairName": {
+          "Description": "Public/private key pairs allow you to securely connect to your NAT instance after it launches. This is used only if the region does not support NAT gateways.",
+          "Type": "AWS::EC2::KeyPair::KeyName"
+      },
+      "KeepInstanceType" : {
+          "Description" : "Keep Host EC2 instance type",
+          "Type" : "String",
+          "Default" : "t2.nano",
+          "AllowedValues" : [ "t2.nano", "t1.micro"],
+          "ConstraintDescription" : "must be a valid EC2 instance type."
+      }
+    },
+    "Resources": {
+        "KeepHost" : {
+            "Type" : "AWS::EC2::Instance",
+            "Properties" : {
+                "InstanceType" : { "Ref" : "KeepInstanceType" },
+                "KeyName"  : { "Ref" : "KeyPairName" },
+                "SubnetId" : {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-Subnet1WorkID"}},
+                "ImageId"  : "ami-f95ef58a",
+                "SecurityGroupIds" : [
+                  { "Ref" : "KeepSecurityGroup" },
+                  {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-WorkSecurityGroupID"}}
+                ],
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "keep"
+                    }
+                ]
+            }
+        },
+        "KeepSecurityGroup" : {
+            "Type" : "AWS::EC2::SecurityGroup",
+            "Properties" : {
+                "GroupDescription" : "Enable access to the Keep host",
+                "VpcId" :  {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCID"}},
+                "SecurityGroupIngress" : [
+                  { "IpProtocol" : "tcp", "FromPort" : "22",  "ToPort" : "22",  "SourceSecurityGroupId" : {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-WorkSecurityGroupID"}}},
+                  { "IpProtocol" : "tcp", "FromPort" : "22",  "ToPort" : "22",  "CidrIp" : {"Fn::ImportValue" : { "Fn::Sub": "${VPCStackName}-VPCCidr" }}}
+                ],
+                "SecurityGroupEgress"  : [
+                  {
+                      "CidrIp": "0.0.0.0/0",
+                      "FromPort": -1,
+                      "IpProtocol": "-1",
+                      "ToPort": -1
+                  }
+                ]
+            }
+        }
+    },
+    "Outputs": {
+        "KeepSGID" : {
+            "Value": {
+                "Ref" : "KeepSecurityGroup"
+            },
+            "Description": "The ID of the Keep secruity group",
+            "Export" : {
+                "Name" : { "Fn::Sub": "${AWS::StackName}-KeepSGID" }
+            }
+        },
+        "KeepPrivateIP" : {
+           "Value": { "Fn::GetAtt" : [ "KeepHost", "PrivateIp" ]},
+           "Description": "The Private IP address of the Keep ionstance",
+           "Export" : {
+               "Name" : { "Fn::Sub": "${AWS::StackName}-KeepPrivateIP" }
+           }
+        }
+    }
+}
