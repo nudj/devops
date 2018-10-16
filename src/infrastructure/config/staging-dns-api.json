@@ -9,11 +9,11 @@
   },
   {
     "ParameterKey": "ServiceName",
-    "ParameterValue": "admin"
+    "ParameterValue": "api"
   },
   {
     "ParameterKey": "HostedZoneName",
-    "ParameterValue": "aws.nudj.co."
+    "ParameterValue": "nudj.internal."
   },
   {
     "ParameterKey": "HostedZoneID",
