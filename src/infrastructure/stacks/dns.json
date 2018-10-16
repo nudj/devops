@@ -25,6 +25,10 @@
     "HostedZoneID": {
       "Description": "The ID of the HostedZone",
       "Type": "String"
+    },
+    "DomainName": {
+      "Description": "The Full DNS Name for new entry",
+      "Type": "String"
     }
   },
   "Resources": {
@@ -36,17 +40,7 @@
         "RecordSets": [
           {
             "Name": {
-              "Fn::Join": [
-                ".",
-                [
-                  {
-                    "Ref": "ServiceName"
-                  },
-                  {
-                    "Ref": "HostedZoneName"
-                  }
-                ]
-              ]
+              "Ref": "DomainName"
             },
             "AliasTarget": {
               "DNSName": {

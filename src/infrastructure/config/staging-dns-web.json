@@ -13,10 +13,14 @@
   },
   {
     "ParameterKey": "HostedZoneName",
-    "ParameterValue": "aws.nudj.co."
+    "ParameterValue": "nudj.co."
   },
   {
     "ParameterKey": "HostedZoneID",
     "ParameterValue": "Z1H1J8MGULJGZT"
+  },
+  {
+    "ParameterKey": "DomainName",
+    "ParameterValue": "web.staging.aws.nudj.co."
   }
 ]

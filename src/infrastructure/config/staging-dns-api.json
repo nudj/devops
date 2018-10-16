@@ -18,5 +18,9 @@
   {
     "ParameterKey": "HostedZoneID",
     "ParameterValue": "Z17ZKK7DWSFC5S"
+  },
+  {
+    "ParameterKey": "DomainName",
+    "ParameterValue": "api.staging.nudj.internal."
   }
 ]
