@@ -1,0 +1,81 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Install a keep server in the public subnet of the VPC",
+    "Parameters": {
+      "VPCStackName": {
+        "Description": "The name of the target VPC stack to deploy this ELB into",
+        "Type": "String"
+      },
+      "EnvironmentType": {
+        "Description": "Name of the environment to build : demo, development, staging performance or production",
+        "Type": "String",
+        "Default": "perf",
+        "AllowedValues": [
+          "staging", "prod", "test", "demo", "perf", "feat1", "feat2", "feat3", "feat4", "feat5", "feat6"
+        ]
+      },
+      "ClusterNodeType" : {
+        "Description" : "The compute and memory capacity of the nodes in the Redis Cluster",
+        "Type" : "String",
+        "Default" : "cache.t2.micro",
+        "AllowedValues" : [ "cache.m1.small", "cache.m1.large", "cache.m1.xlarge", "cache.m2.xlarge", "cache.m2.2xlarge", "cache.m2.4xlarge", "cache.c1.xlarge", "cache.t2.micro", "cache.t2.small", "cache.t2.medium", "cache.m3.medium", "cache.m3.large", "cache.m3.xlarge", "cache.m3.2xlarge", "cache.r3.large", "cache.r3.xlarge", "cache.r3.2xlarge", "cache.r3.4xlarge", "cache.r3.8xlarge" ],
+        "ConstraintDescription" : "must select a valid Cache Node type."
+      },
+      "ClusterCacheNodes": {
+        "Description":  "The number of cache nodes",
+        "Type": "String",
+        "Default": "1"
+      }
+    },
+    "Resources": {
+      "RedisSecurityGroup": {
+        "Type": "AWS::EC2::SecurityGroup",
+        "Properties": {
+          "GroupDescription": "Redis Security Group",
+          "SecurityGroupIngress": [ {
+            "CidrIp": { "Fn::Sub" : [ "${CIDRROOT}.0.0/16", {"CIDRROOT" : {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCCIDRROOT"}}}]},
+            "IpProtocol": "tcp",
+            "FromPort": "6379",
+            "ToPort": "6379"
+          } ],
+          "VpcId": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCID"}}
+        }
+      },
+      "RedisCluster" : {
+        "Type": "AWS::ElastiCache::CacheCluster",
+        "Properties": {
+          "ClusterName" : { "Fn::Join": ["-", ["redis-cache", { "Ref": "EnvironmentType" } ]] },
+          "CacheNodeType"           : { "Ref" : "ClusterNodeType" },
+          "CacheSubnetGroupName": {
+              "Ref": "RedisSubnetGroup"
+          },
+          "VpcSecurityGroupIds": [{"Fn::GetAtt": [ "RedisSecurityGroup", "GroupId"]}],
+          "Engine"                  : "redis",
+          "NumCacheNodes"           : "1"
+        }
+      },
+      "RedisSubnetGroup" : {
+          "Type" : "AWS::ElastiCache::SubnetGroup",
+          "Properties" : {
+              "Description" : {"Fn::Sub" : "Elastic Cache Subnet Group ${EnvironmentType}"},
+              "SubnetIds" : [ {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-Subnet1WorkID"}}, {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-Subnet2WorkID"}} ]
+          }
+      }
+    },
+    "Outputs": {
+      "RedisClusterEndpointAddress": {
+  			"Value": { "Fn::GetAtt": ["RedisCluster", "RedisEndpoint.Address" ]},
+        "Description": "RedisCluster Endpoint Address",
+        "Export" : {
+          "Name" : { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-RedisEndpointAddress" }
+        }
+      },
+  		"RedisClusterEndpointPort": {
+  			"Value": { "Fn::GetAtt": ["RedisCluster", "RedisEndpoint.Port" ]},
+        "Description": "RedisCluster Endpoint Port",
+        "Export" : {
+          "Name" : { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-RedisEndpointPort" }
+        }
+      }
+    }
+}
