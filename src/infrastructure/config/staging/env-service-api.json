@@ -10,13 +10,5 @@
   {
     "Name": "EndpointPort",
     "Value": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-EndpointPort"}}
-  },
-  {
-    "Name": "RedisEndpointAddress",
-    "Value": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-RedisEndpointAddress"}}
-  },
-  {
-    "Name": "RedisEndpointPort",
-    "Value": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-RedisEndpointPort"}}
   }
 ]

@@ -2,5 +2,13 @@
   {
     "Name": "ENVKEY",
     "Value": "{{resolve:ssm:staging-hire-envkey:1}}"
+  },
+  {
+    "Name": "RedisEndpointAddress",
+    "Value": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-RedisEndpointAddress"}}
+  },
+  {
+    "Name": "RedisEndpointPort",
+    "Value": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-RedisEndpointPort"}}
   }
 ]
