@@ -40,6 +40,10 @@
           "Component": "aurora",
           "Stateful": true,
           "SnapshotOnTeardown": true
+        },
+        {
+          "StackName": "redis",
+          "Component": "redis"
         }
       ]
     },
