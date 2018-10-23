@@ -1,0 +1,22 @@
+[
+  {
+    "ParameterKey": "VPCStackName",
+    "ParameterValue": "core-vpc"
+  },
+  {
+    "ParameterKey": "EnvironmentType",
+    "ParameterValue": "demo"
+  },
+  {
+    "ParameterKey": "ProjectName",
+    "ParameterValue": "evacuate"
+  },
+  {
+    "ParameterKey": "Description",
+    "ParameterValue": "Evacuation Job"
+  },
+  {
+    "ParameterKey": "GithubRepo",
+    "ParameterValue": "https://github.com/nudj/devops.git"
+  }
+]

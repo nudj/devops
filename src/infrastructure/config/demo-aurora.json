@@ -1,0 +1,26 @@
+[
+  {
+    "ParameterKey": "VPCStackName",
+    "ParameterValue": "core-vpc"
+  },
+  {
+    "ParameterKey": "EnvironmentType",
+    "ParameterValue": "demo"
+  },
+  {
+    "ParameterKey": "DatabaseUsername",
+    "ParameterValue": "FYDrRxvcwR"
+  },
+  {
+    "ParameterKey": "DatabasePassword",
+    "ParameterValue": "faun-governor-synonym-progress-albania-vilify-handball-forecast-thrift-tolerate"
+  },
+  {
+    "ParameterKey": "MultiAZ",
+    "ParameterValue": "false"
+  },
+  {
+    "ParameterKey": "DatabaseName",
+    "ParameterValue": "nudj"
+  }
+]

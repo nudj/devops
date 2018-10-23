@@ -1,0 +1,22 @@
+[
+  {
+    "ParameterKey": "VPCStackName",
+    "ParameterValue": "core-vpc"
+  },
+  {
+    "ParameterKey": "EnvironmentType",
+    "ParameterValue": "demo"
+  },
+  {
+    "ParameterKey": "ProjectName",
+    "ParameterValue": "migrate"
+  },
+  {
+    "ParameterKey": "Description",
+    "ParameterValue": "Migration Job"
+  },
+  {
+    "ParameterKey": "GithubRepo",
+    "ParameterValue": "https://github.com/nudj/devops.git"
+  }
+]
