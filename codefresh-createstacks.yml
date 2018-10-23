@@ -8,8 +8,8 @@ steps:
     description: Create the nudj stack
     commands:
       - sol layer build -l core
-      - sol layer build -l env -e staging
-      - sol layer build -l dns -e staging
-      - sol layer build -l db -e staging
-      - sol layer build -l service -e staging
-      - sol layer build -l tools -e staging
+      - sol layer build -l env -e ${{ENVIRONMENT}}
+      - sol layer build -l dns -e ${{ENVIRONMENT}}
+      - sol layer build -l db -e ${{ENVIRONMENT}}
+      - sol layer build -l service -e ${{ENVIRONMENT}}
+      - sol layer build -l tools -e ${{ENVIRONMENT}}
