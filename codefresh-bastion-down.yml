@@ -1,0 +1,11 @@
+version: '1.0'
+
+steps:
+
+  create_vpc:
+    image: fdearle/sol-tools:0.0.4
+    working_directory: IMAGE_WORK_DIR
+    description: Tear down the bastion
+    commands:
+      - sol bastion destroy -v core
+      - sol layer destroy -l keep -e ${{ENVIRONMENT}}

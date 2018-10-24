@@ -9,7 +9,7 @@
   },
   {
     "ParameterKey": "KeyPairName",
-    "ParameterValue": "get your keypair"
+    "ParameterValue": "bastion"
   },
   {
     "ParameterKey": "KeepInstanceType",

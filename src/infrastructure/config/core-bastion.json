@@ -5,11 +5,11 @@
   },
   {
     "ParameterKey": "RemoteCIDRBlock",
-    "ParameterValue": "0.0.0.0/0"
+    "ParameterValue": "109.231.193.164/32"
   },
   {
     "ParameterKey": "KeyPairName",
-    "ParameterValue": "your-keypair-name"
+    "ParameterValue": "bastion"
   },
   {
     "ParameterKey": "BastionInstanceType",
