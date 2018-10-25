@@ -18,6 +18,10 @@
       "Description": "The Where to get the code",
       "Type": "String"
     },
+    "BuildSpec": {
+      "Description": "The buid spec file for this build",
+      "Type": "String"
+    },
     "EnvironmentType": {
       "Description": "Name of the environment to build : demo, development, staging performance or production",
       "Type": "String",
@@ -51,7 +55,8 @@
         "Source": {
           "Type": "GITHUB",
           "Location": { "Ref": "GithubRepo" },
-          "GitCloneDepth": 1
+          "GitCloneDepth": 1,
+          "BuildSpec": { "Ref": "BuildSpec" },
         },
         "VpcConfig": {
           "VpcId": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCID"}},
