@@ -83,7 +83,7 @@
     },
     {
       "LayerName": "service",
-      "Depends": "env",
+      "Depends": "db",
       "EnvironmentSpecific": true,
       "Components": [
         {
