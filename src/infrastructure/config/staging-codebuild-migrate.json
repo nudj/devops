@@ -18,5 +18,9 @@
   {
     "ParameterKey": "GithubRepo",
     "ParameterValue": "https://github.com/nudj/devops.git"
+  },
+  {
+    "ParameterKey": "BuildSpec",
+    "ParameterValue": "codebuild-migrate.yml"
   }
 ]
