@@ -50,7 +50,34 @@
         "Environment": {
           "ComputeType": "BUILD_GENERAL1_SMALL",
           "Image": "aws/codebuild/nodejs:8.11.0",
-          "Type": "LINUX_CONTAINER"
+          "Type": "LINUX_CONTAINER",
+          "EnvironmentVariables": [
+            {
+              "Name": "SQL_HOST",
+              "Type": "PLAINTEXT",
+              "Value": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-EndpointAddress"}}
+            },
+            {
+              "Name": "SQL_PORT",
+              "Type": "PLAINTEXT",
+              "Value": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-EndpointPort"}}
+            },
+            {
+              "Name": "SQL_NAME",
+              "Type": "PLAINTEXT",
+              "Value": "nudj"
+            },
+            {
+              "Name": "SQL_USER",
+              "Type": "PLAINTEXT",
+              "Value": "user"
+            },
+            {
+              "Name": "SQL_PASS",
+              "Type": "PLAINTEXT",
+              "Value": "pass"
+            }
+          ]
         },
         "Source": {
           "Type": "GITHUB",
