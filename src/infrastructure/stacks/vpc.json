@@ -318,6 +318,13 @@
                 "Name" : { "Fn::Sub": "${AWS::StackName}-VPCID" }
             }
         },
+        "VPCCidr": {
+          "Value": { "Fn::GetAtt": ["VPC", "CidrBlock" ]},
+          "Description": "VPC Cidr block",
+          "Export" : {
+            "Name" : { "Fn::Sub": "${AWS::StackName}-VPCCidr" }
+          }
+        },
         "VpcCidrRoot": {
             "Value": {
                 "Ref": "VPCCIDRROOT"
