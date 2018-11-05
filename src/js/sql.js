@@ -18,6 +18,7 @@ const TABLES = {
   EMPLOYEES: 'employees',
   EMPLOYMENTS: 'employments',
   HIRERS: 'hirers',
+  INTROS: 'intros',
   JOBS: 'jobs',
   JOB_TAGS: 'jobTags',
   JOB_VIEW_EVENTS: 'jobViewEvents',
@@ -100,6 +101,12 @@ const FIELDS = {
     PERSON: 'person',
     COMPANY: 'company'
   },
+  [TABLES.INTROS]: {
+    JOB: 'job',
+    PERSON: 'person',
+    CANDIDATE: 'candidate',
+    NOTES: 'notes'
+  },
   [TABLES.JOBS]: {
     TITLE: 'title',
     SLUG: 'slug',
@@ -133,7 +140,9 @@ const FIELDS = {
     FIRST_NAME: 'firstName',
     LAST_NAME: 'lastName',
     URL: 'url',
-    EMAIL_PREFERENCE: 'emailPreference'
+    EMAIL_PREFERENCE: 'emailPreference',
+    SIGNED_UP: 'signedUp',
+    ACCEPTED_TERMS: 'acceptedTerms'
   },
   [TABLES.PERSON_ROLES]: {
     PERSON: 'person',
@@ -338,12 +347,6 @@ const INDICES = merge(
       [F.CONNECTIONS.FROM + F.CONNECTIONS.PERSON]: {
         name: `${TABLES.CONNECTIONS}ByFromPerson`,
         fields: [F.CONNECTIONS.FROM, F.CONNECTIONS.PERSON]
-      }
-    },
-    [TABLES.ACCOUNTS]: {
-      [F.ACCOUNTS.EMAIL]: {
-        name: `${TABLES.ACCOUNTS}ByEmail`,
-        fields: [F.ACCOUNTS.EMAIL]
       }
     },
     [TABLES.CONVERSATIONS]: {

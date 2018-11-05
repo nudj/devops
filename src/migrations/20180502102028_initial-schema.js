@@ -19,7 +19,9 @@ exports.up = async knex => {
         FIRST_NAME,
         LAST_NAME,
         URL,
-        EMAIL_PREFERENCE
+        EMAIL_PREFERENCE,
+        SIGNED_UP,
+        ACCEPTED_TERMS
       } = FIELDS[TABLES.PEOPLE]
 
       defaultConfig(table, knex)
@@ -30,6 +32,8 @@ exports.up = async knex => {
       urlType(URL, table, knex).nullable()
       table.enum(EMAIL_PREFERENCE, ENUMS.ACCOUNT_TYPES.values).nullable()
       table.unique(EMAIL, INDICES[TABLES.PEOPLE][EMAIL].name)
+      table.boolean(SIGNED_UP).defaultTo(false).notNullable()
+      table.boolean(ACCEPTED_TERMS).defaultTo(false).notNullable()
     })
 
     .createTable(TABLES.COMPANIES, table => {
@@ -264,7 +268,6 @@ exports.up = async knex => {
       table.json(DATA).notNullable().comment('Object of account authorisation secrets')
       table.enum(TYPE, ENUMS.ACCOUNT_TYPES.values).defaultTo(ENUMS.ACCOUNT_TYPES.GOOGLE).notNullable()
       relationType(PERSON, TABLES.PEOPLE, table, knex).notNullable()
-      table.unique(EMAIL, INDICES[TABLES.ACCOUNTS][EMAIL].name)
     })
 
     .createTable(TABLES.CONVERSATIONS, table => {
@@ -517,10 +520,27 @@ exports.up = async knex => {
       table.string(JOB_SLUG).notNullable()
       table.unique(JOB_SLUG, INDICES[TABLES.REFERRAL_KEY_TO_SLUG_MAP][JOB_SLUG].name)
     })
+
+    .createTable(TABLES.INTROS, table => {
+      const {
+        JOB,
+        PERSON,
+        CANDIDATE,
+        NOTES
+      } = FIELDS[TABLES.INTROS]
+
+      defaultConfig(table, knex)
+      defaultFields(table, knex)
+      relationType(JOB, TABLES.JOBS, table, knex).notNullable()
+      relationType(PERSON, TABLES.PEOPLE, table, knex).notNullable()
+      relationType(CANDIDATE, TABLES.PEOPLE, table, knex).notNullable()
+      table.text(NOTES).notNullable()
+    })
 }
 
 exports.down = async knex => {
   await knex.schema
+    .dropTable(TABLES.INTROS)
     .dropTable(TABLES.REFERRAL_KEY_TO_SLUG_MAP)
     .dropTable(TABLES.MESSAGE_EVENTS)
     .dropTable(TABLES.JOB_VIEW_EVENTS)
