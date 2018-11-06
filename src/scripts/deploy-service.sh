@@ -85,7 +85,7 @@ generateContainerDefinition "$ENVIRONMENT" $PORT $MEMORY $CPU "$COMPONENT" "$VPC
 
 exports=$(aws cloudformation list-exports)
 
-roleArn=$(echo ${exports} | jq '.Exports[] | select(.Name == "core-vpc-test-ECSTaskExecutionRoleArn").Value' | tr -d '"')
+roleArn=$(echo ${exports} | jq ".Exports[] | select(.Name == '$VPC_STACK-$ENVIRONMENT-ECSTaskExecutionRoleArn').Value" | tr -d '"')
 
 aws ecs register-task-definition --execution-role-arn $roleArn --cpu $CPU --memory $MEMORY --network-mode awsvpc --requires-compatibilities "FARGATE" --family "$VPC_STACK-$ENVIRONMENT-$COMPONENT" --container-definitions "$template" --region $AWS_REGION
 
