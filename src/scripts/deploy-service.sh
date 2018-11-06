@@ -66,7 +66,7 @@ parseCommonArguments "$@"
 if [ "$COMPONENT" = "" ]; then
   STACK_NAME=$ENVIRONMENT-service
 else
-  STACK_NAME=$ENVIRONMENT-$COMPONENT-service
+  STACK_NAME=$ENVIRONMENT-service-$COMPONENT
 fi
 
 CF_PARAMETERS=$(realpath ./infrastructure/config/$STACK_NAME.json)
