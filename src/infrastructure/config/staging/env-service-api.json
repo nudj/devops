@@ -4,11 +4,11 @@
     "Value": "{{resolve:ssm:staging-api-envkey:1}}"
   },
   {
-    "Name": "EndpointAddress",
+    "Name": "SQL_HOST",
     "Value": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-EndpointAddress"}}
   },
   {
-    "Name": "EndpointPort",
+    "Name": "SQL_PORT",
     "Value": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-EndpointPort"}}
   }
 ]
