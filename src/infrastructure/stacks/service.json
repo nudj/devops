@@ -176,7 +176,7 @@
         "NetworkConfiguration": {
           "AwsvpcConfiguration": {
             "AssignPublicIp": "ENABLED",
-            "SecurityGroups": [ { "Ref": "TaskSecurityGroup"} ],
+            "SecurityGroups": [ { "Ref": "TaskSecurityGroup"}, {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-WorkSecurityGroupID"}}],
             "Subnets" : [ {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-PublicSubnet1ID"}}, {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-PublicSubnet2ID"}} ]
           }
         },
