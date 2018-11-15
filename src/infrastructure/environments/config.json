@@ -87,19 +87,19 @@
       "EnvironmentSpecific": true,
       "Components": [
         {
-          "StackName": "service",
+          "StackName": "container",
           "Component": "web"
         },
         {
-          "StackName": "service",
+          "StackName": "container",
           "Component": "hire"
         },
         {
-          "StackName": "service",
+          "StackName": "container",
           "Component": "admin"
         },
         {
-          "StackName": "service",
+          "StackName": "container",
           "Component": "api"
         }
       ]
