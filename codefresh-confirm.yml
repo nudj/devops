@@ -7,4 +7,4 @@ steps:
     commands:
       - pwd
       - ls -la
-      - ./scripts/execute-remote.sh -p core-vpc-${{ENVIRONMENT}}-confirm
+      - ./src/scripts/execute-remote.sh -p core-vpc-${{ENVIRONMENT}}-confirm
