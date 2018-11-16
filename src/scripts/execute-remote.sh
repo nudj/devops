@@ -54,6 +54,9 @@ function parseCommonArguments() {
 }
 
 function startBuildAndWait() {
+  echo "ENVIRONMENT $ENVIRONMENT"
+  ENVKEY=$(sol secret get -n envkey -e $ENVIRONMENT -c api)
+  echo "ENVKEY $ENVKEY"
   buildId=$(aws codebuild start-build --region $AWS_DEFAULT_REGION --project-name $PROJECT --source-version $CF_REVISION --environment-variables-override name=SHA1,value=$CF_REVISION,type=PLAINTEXT name=BRANCH,value=$CIRCLE_BRANCH,type=PLAINTEXT name=NPM_TOKEN,value=$NPM_TOKEN,type=PLAINTEXT name=ENVKEY,value=$ENVKEY,type=PLAINTEXT name=TYPE,value=$TYPE,type=PLAINTEXT name=APP_NAME,value=$APP_NAME,type=PLAINTEXT| jq '.build.id' | tr -d '"')
   echo "TYPE $TYPE"
 
