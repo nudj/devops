@@ -3,8 +3,6 @@ version: '1.0'
 steps:
 
   evacuate:
-    image: nudj/devops:aws
-    working_directory: IMAGE_WORK_DIR
+    image: fdearle/sol-tools:0.0.10
     commands:
-      - eval $(envkey-source)
-      - ./scripts/execute-remote.sh -p core-vpc-staging-evacuate
+      - ./src/scripts/execute-remote.sh -p core-vpc-${{ENVIRONMENT}}-evacuate

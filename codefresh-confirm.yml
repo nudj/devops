@@ -5,6 +5,4 @@ steps:
   confirm:
     image: fdearle/sol-tools:0.0.10
     commands:
-      - pwd
-      - ls -la
       - ./src/scripts/execute-remote.sh -p core-vpc-${{ENVIRONMENT}}-confirm
