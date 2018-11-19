@@ -2,10 +2,10 @@ require('envkey')
 const { Database } = require('arangojs')
 const knex = require('knex')
 
-const AQL_URL = `${process.env.AQL_PROTOCOL}://${process.env.AQL_HOST}:${process.env.AQL_PORT}`
-const db = new Database({ url: AQL_URL })
-db.useDatabase(process.env.AQL_NAME)
-db.useBasicAuth(process.env.AQL_USER, process.env.AQL_PASS)
+const DB_URL = `${process.env.DB_PROTOCOL}://${process.env.DB_HOST}:${process.env.DB_PORT}`
+const db = new Database({ url: DB_URL })
+db.useDatabase(process.env.DB_NAME)
+db.useBasicAuth(process.env.DB_USER, process.env.DB_PASS)
 
 const sql = knex({
   client: 'mysql',
