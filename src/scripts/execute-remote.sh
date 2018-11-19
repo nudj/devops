@@ -56,8 +56,10 @@ function parseCommonArguments() {
 function startBuildAndWait() {
   echo "ENVIRONMENT $ENVIRONMENT"
   ENVKEY=$(sol secret get -n envkey -e $ENVIRONMENT -c api)
+  SQL_USER=$(sol secret get -n user -e $ENVIRONMENT -c db)
+  SQL_PASS=$(sol secret get -n pass -e $ENVIRONMENT -c db)
   echo "ENVKEY $ENVKEY"
-  buildId=$(aws codebuild start-build --region $AWS_DEFAULT_REGION --project-name $PROJECT --source-version $CF_REVISION --environment-variables-override name=SHA1,value=$CF_REVISION,type=PLAINTEXT name=BRANCH,value=$CIRCLE_BRANCH,type=PLAINTEXT name=NPM_TOKEN,value=$NPM_TOKEN,type=PLAINTEXT name=ENVKEY,value=$ENVKEY,type=PLAINTEXT name=TYPE,value=$TYPE,type=PLAINTEXT name=APP_NAME,value=$APP_NAME,type=PLAINTEXT| jq '.build.id' | tr -d '"')
+  buildId=$(aws codebuild start-build --region $AWS_DEFAULT_REGION --project-name $PROJECT --source-version $CF_REVISION --environment-variables-override name=SHA1,value=$CF_REVISION,type=PLAINTEXT name=BRANCH,value=$CIRCLE_BRANCH,type=PLAINTEXT name=NPM_TOKEN,value=$NPM_TOKEN,type=PLAINTEXT name=ENVKEY,value=$ENVKEY,type=PLAINTEXT name=SQL_USER,value=$SQL_USER,type=PLAINTEXT name=SQL_PASS,value=$SQL_PASS,type=PLAINTEXT name=TYPE,value=$TYPE,type=PLAINTEXT name=APP_NAME,value=$APP_NAME,type=PLAINTEXT| jq '.build.id' | tr -d '"')
   echo "TYPE $TYPE"
 
   buildJson=$(aws codebuild batch-get-builds --region $AWS_DEFAULT_REGION --ids $buildId)
