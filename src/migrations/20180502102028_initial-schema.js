@@ -45,7 +45,9 @@ exports.up = async knex => {
         LOGO,
         URL,
         CLIENT,
-        HASH
+        HASH,
+        ONBOARDED,
+        ATS
       } = FIELDS[TABLES.COMPANIES]
 
       defaultConfig(table, knex)
@@ -58,8 +60,10 @@ exports.up = async knex => {
       urlType(LOGO, table, knex).nullable()
       urlType(URL, table, knex).nullable()
       table.boolean(CLIENT).defaultTo(false).notNullable()
+      table.boolean(ONBOARDED).defaultTo(false).notNullable()
       table.unique(NAME, INDICES[TABLES.COMPANIES][NAME].name)
       table.unique(SLUG, INDICES[TABLES.COMPANIES][SLUG].name)
+      table.enum(ATS, ENUMS.COMPANY_INTEGRATION_TYPES.values).nullable()
     })
 
     .createTable(TABLES.JOBS, table => {
@@ -69,7 +73,6 @@ exports.up = async knex => {
         URL,
         LOCATION,
         REMUNERATION,
-        TEMPLATE,
         DESCRIPTION,
         CANDIDATE_DESCRIPTION,
         ROLE_DESCRIPTION,
@@ -87,7 +90,6 @@ exports.up = async knex => {
       urlType(URL, table, knex).nullable()
       table.string(LOCATION).nullable()
       table.string(REMUNERATION).nullable()
-      table.string(TEMPLATE).nullable()
       table.text(DESCRIPTION).nullable()
       table.text(CANDIDATE_DESCRIPTION).nullable()
       table.text(ROLE_DESCRIPTION).nullable()
@@ -294,7 +296,7 @@ exports.up = async knex => {
         INTRO_DESCRIPTION,
         OUTRO_TITLE,
         OUTRO_DESCRIPTION,
-        SURVEY_SECTIONS
+        SURVEY_QUESTIONS
       } = FIELDS[TABLES.SURVEYS]
 
       defaultConfig(table, knex)
@@ -304,27 +306,8 @@ exports.up = async knex => {
       table.text(INTRO_DESCRIPTION).notNullable()
       table.string(OUTRO_TITLE).nullable()
       table.text(OUTRO_DESCRIPTION).nullable()
-      table.json(SURVEY_SECTIONS).notNullable().comment('Array of surveySection ids denoting their order')
-      table.unique(SLUG, INDICES[TABLES.SURVEYS][SLUG].name)
-    })
-
-    .createTable(TABLES.SURVEY_SECTIONS, table => {
-      const {
-        SLUG,
-        TITLE,
-        DESCRIPTION,
-        SURVEY_QUESTIONS,
-        SURVEY
-      } = FIELDS[TABLES.SURVEY_SECTIONS]
-
-      defaultConfig(table, knex)
-      defaultFields(table, knex)
-      table.string(SLUG).notNullable()
-      table.string(TITLE).notNullable()
-      table.text(DESCRIPTION).notNullable()
       table.json(SURVEY_QUESTIONS).notNullable().comment('Array of surveyQuestion ids denoting their order')
-      relationType(SURVEY, TABLES.SURVEYS, table, knex).notNullable()
-      table.unique([SLUG, SURVEY], INDICES[TABLES.SURVEY_SECTIONS][[SLUG, SURVEY].join('')].name)
+      table.unique(SLUG, INDICES[TABLES.SURVEYS][SLUG].name)
     })
 
     .createTable(TABLES.SURVEY_QUESTIONS, table => {
@@ -334,7 +317,7 @@ exports.up = async knex => {
         DESCRIPTION,
         REQUIRED,
         TYPE,
-        SURVEY_SECTION
+        SURVEY
       } = FIELDS[TABLES.SURVEY_QUESTIONS]
 
       defaultConfig(table, knex)
@@ -344,8 +327,8 @@ exports.up = async knex => {
       table.text(DESCRIPTION).notNullable()
       table.boolean(REQUIRED).defaultTo(false).notNullable()
       table.enum(TYPE, ENUMS.QUESTION_TYPES.values).notNullable()
-      relationType(SURVEY_SECTION, TABLES.SURVEY_SECTIONS, table, knex).notNullable()
-      table.unique([SLUG, SURVEY_SECTION], INDICES[TABLES.SURVEY_QUESTIONS][[SLUG, SURVEY_SECTION].join('')].name)
+      relationType(SURVEY, TABLES.SURVEYS, table, knex).notNullable()
+      table.unique([SLUG, SURVEY], INDICES[TABLES.SURVEY_QUESTIONS][[SLUG, SURVEY].join('')].name)
     })
 
     .createTable(TABLES.SURVEY_ANSWERS, table => {
@@ -536,10 +519,25 @@ exports.up = async knex => {
       relationType(CANDIDATE, TABLES.PEOPLE, table, knex).notNullable()
       table.text(NOTES).notNullable()
     })
+
+    .createTable(TABLES.COMPANY_INTEGRATIONS, table => {
+      const {
+        COMPANY,
+        TYPE,
+        DATA
+      } = FIELDS[TABLES.COMPANY_INTEGRATIONS]
+
+      defaultConfig(table, knex)
+      defaultFields(table, knex)
+      relationType(COMPANY, TABLES.COMPANIES, table, knex).notNullable()
+      table.enum(TYPE, ENUMS.COMPANY_INTEGRATION_TYPES.values).notNullable()
+      table.json(DATA).notNullable().comment('Object of integration authorisation secrets')
+    })
 }
 
 exports.down = async knex => {
   await knex.schema
+    .dropTable(TABLES.COMPANY_INTEGRATIONS)
     .dropTable(TABLES.INTROS)
     .dropTable(TABLES.REFERRAL_KEY_TO_SLUG_MAP)
     .dropTable(TABLES.MESSAGE_EVENTS)
@@ -554,7 +552,6 @@ exports.down = async knex => {
     .dropTable(TABLES.SURVEY_ANSWER_CONNECTIONS)
     .dropTable(TABLES.SURVEY_ANSWERS)
     .dropTable(TABLES.SURVEY_QUESTIONS)
-    .dropTable(TABLES.SURVEY_SECTIONS)
     .dropTable(TABLES.COMPANY_SURVEYS)
     .dropTable(TABLES.SURVEYS)
     .dropTable(TABLES.CONVERSATIONS)

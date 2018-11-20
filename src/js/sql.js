@@ -11,6 +11,7 @@ const TABLES = {
   APPLICATIONS: 'applications',
   COMPANIES: 'companies',
   COMPANY_SURVEYS: 'companySurveys',
+  COMPANY_INTEGRATIONS: 'companyIntegrations',
   CONNECTIONS: 'connections',
   CONVERSATIONS: 'conversations',
   CURRENT_EMPLOYMENTS: 'currentEmployments',
@@ -35,7 +36,6 @@ const TABLES = {
   SURVEY_ANSWER_CONNECTIONS: 'surveyAnswerConnections',
   SURVEY_QUESTIONS: 'surveyQuestions',
   SURVEY_QUESTION_TAGS: 'surveyQuestionTags',
-  SURVEY_SECTIONS: 'surveySections',
   TAGS: 'tags'
 }
 const TABLES_INVERTED = invert(TABLES)
@@ -65,7 +65,14 @@ const FIELDS = {
     LOGO: 'logo',
     URL: 'url',
     CLIENT: 'client',
-    HASH: 'hash'
+    HASH: 'hash',
+    ONBOARDED: 'onboarded',
+    ATS: 'ats'
+  },
+  [TABLES.COMPANY_INTEGRATIONS]: {
+    TYPE: 'type',
+    COMPANY: 'company',
+    DATA: 'data'
   },
   [TABLES.CONNECTIONS]: {
     FIRST_NAME: 'firstName',
@@ -113,7 +120,6 @@ const FIELDS = {
     URL: 'url',
     LOCATION: 'location',
     REMUNERATION: 'remuneration',
-    TEMPLATE: 'template',
     DESCRIPTION: 'description',
     CANDIDATE_DESCRIPTION: 'candidateDescription',
     ROLE_DESCRIPTION: 'roleDescription',
@@ -181,7 +187,7 @@ const FIELDS = {
     INTRO_DESCRIPTION: 'introDescription',
     OUTRO_TITLE: 'outroTitle',
     OUTRO_DESCRIPTION: 'outroDescription',
-    SURVEY_SECTIONS: 'surveySections'
+    SURVEY_QUESTIONS: 'surveyQuestions'
   },
   [TABLES.SURVEY_ANSWERS]: {
     PERSON: 'person',
@@ -197,19 +203,12 @@ const FIELDS = {
     DESCRIPTION: 'description',
     REQUIRED: 'required',
     TYPE: 'type',
-    SURVEY_SECTION: 'surveySection'
+    SURVEY: 'survey'
   },
   [TABLES.SURVEY_QUESTION_TAGS]: {
     SOURCE: 'source',
     SURVEY_QUESTION: 'surveyQuestion',
     TAG: 'tag'
-  },
-  [TABLES.SURVEY_SECTIONS]: {
-    SLUG: 'slug',
-    TITLE: 'title',
-    DESCRIPTION: 'description',
-    SURVEY_QUESTIONS: 'surveyQuestions',
-    SURVEY: 'survey'
   },
   [TABLES.COMPANY_SURVEYS]: {
     COMPANY: 'company',
@@ -245,7 +244,8 @@ const ENUMS = {
   DATA_SOURCES: createEnumDefinition(['MANUAL', 'LINKEDIN', 'SURVEY', 'NUDJ']),
   ACCOUNT_TYPES: createEnumDefinition(['GOOGLE', 'OTHER']),
   QUESTION_TYPES: createEnumDefinition(['CONNECTIONS', 'COMPANIES']),
-  TAG_TYPES: createEnumDefinition(['EXPERTISE', 'SENIORITY'])
+  TAG_TYPES: createEnumDefinition(['EXPERTISE', 'SENIORITY']),
+  COMPANY_INTEGRATION_TYPES: createEnumDefinition(['GREENHOUSE', 'OTHER'])
 }
 const INDICES = merge(
   reduce(TABLES, (indexes, tableName) => {
@@ -361,16 +361,10 @@ const INDICES = merge(
         fields: [F.SURVEYS.SLUG]
       }
     },
-    [TABLES.SURVEY_SECTIONS]: {
-      [F.SURVEY_SECTIONS.SLUG + F.SURVEY_SECTIONS.SURVEY]: {
-        name: `${TABLES.SURVEY_SECTIONS}BySlugSurvey`,
-        fields: [F.SURVEY_SECTIONS.SLUG, F.SURVEY_SECTIONS.SURVEY]
-      }
-    },
     [TABLES.SURVEY_QUESTIONS]: {
-      [F.SURVEY_QUESTIONS.SLUG + F.SURVEY_QUESTIONS.SURVEY_SECTION]: {
-        name: `${TABLES.SURVEY_QUESTIONS}BySlugSurveySection`,
-        fields: [F.SURVEY_QUESTIONS.SURVEY_SECTION, F.SURVEY_QUESTIONS.SLUG]
+      [F.SURVEY_QUESTIONS.SLUG + F.SURVEY_QUESTIONS.SURVEY]: {
+        name: `${TABLES.SURVEY_QUESTIONS}BySlugSurvey`,
+        fields: [F.SURVEY_QUESTIONS.SURVEY, F.SURVEY_QUESTIONS.SLUG]
       }
     },
     [TABLES.SURVEY_ANSWERS]: {
@@ -481,13 +475,9 @@ const SLUG_GENERATORS = {
   [TABLES.REFERRALS]: {
     generator: slugGenerators.random
   },
-  [TABLES.SURVEY_SECTIONS]: {
-    generator: slugGenerators.field(FIELDS[TABLES.SURVEY_SECTIONS].TITLE),
-    index: 'surveySectionsBySlugSurvey'
-  },
   [TABLES.SURVEY_QUESTIONS]: {
     generator: slugGenerators.field(FIELDS[TABLES.SURVEY_QUESTIONS].TITLE),
-    index: 'surveyQuestionsBySlugSurveySection'
+    index: 'surveyQuestionsBySlugSurvey'
   },
   [TABLES.COMPANIES]: {
     generator: slugGenerators.field(FIELDS[TABLES.COMPANIES].NAME),
