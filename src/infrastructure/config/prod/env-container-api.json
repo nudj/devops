@@ -1,0 +1,14 @@
+"Environment": [
+  {
+    "Name": "ENVKEY",
+    "Value": "{{resolve:ssm:prod-api-envkey:1}}"
+  },
+  {
+    "Name": "SQL_HOST",
+    "Value": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-EndpointAddress"}}
+  },
+  {
+    "Name": "SQL_PORT",
+    "Value": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-EndpointPort"}}
+  }
+]
