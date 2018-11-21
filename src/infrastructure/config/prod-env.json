@@ -1,7 +1,7 @@
 [
   {
     "ParameterKey": "VPCStackName",
-    "ParameterValue": "nudj-vpc"
+    "ParameterValue": "core-vpc"
   },
   {
     "ParameterKey": "EnvironmentType",

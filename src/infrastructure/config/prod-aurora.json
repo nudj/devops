@@ -1,0 +1,26 @@
+[
+  {
+    "ParameterKey": "VPCStackName",
+    "ParameterValue": "core-vpc"
+  },
+  {
+    "ParameterKey": "EnvironmentType",
+    "ParameterValue": "prod"
+  },
+  {
+    "ParameterKey": "DatabaseUsername",
+    "ParameterValue": "yr7Jj2z2ps"
+  },
+  {
+    "ParameterKey": "DatabasePassword",
+    "ParameterValue": "x2UD8seWFzorsJ7Ejof84XNQKJ8J93mgZE7xNG9U"
+  },
+  {
+    "ParameterKey": "MultiAZ",
+    "ParameterValue": "false"
+  },
+  {
+    "ParameterKey": "DatabaseName",
+    "ParameterValue": "nudj"
+  }
+]

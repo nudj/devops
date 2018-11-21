@@ -1,14 +1,18 @@
 [
   {
     "ParameterKey": "VPCStackName",
-    "ParameterValue": "nudj-vpc"
+    "ParameterValue": "core-vpc"
   },
   {
     "ParameterKey": "EnvironmentType",
     "ParameterValue": "prod"
   },
   {
+    "ParameterKey": "UseHTTPS",
+    "ParameterValue": "true"
+  },
+  {
     "ParameterKey": "CertificateArn",
-    "ParameterValue": "your certificate arn for *.nudj.co"
+    "ParameterValue": "arn:aws:acm:eu-west-1:470250561590:certificate/15e125d4-8498-41d7-9b10-d5ecc62f53c3"
   }
 ]
