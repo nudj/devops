@@ -9,11 +9,11 @@
   },
   {
     "ParameterKey": "DatabaseUsername",
-    "ParameterValue": "FYDrRxvcwR"
+    "ParameterValue": "{{resolve:ssm:demo-db-user:1}}"
   },
   {
     "ParameterKey": "DatabasePassword",
-    "ParameterValue": "iBxu6TH2VU6jK3xCcCo8dA882LjFa26VVmtiECru"
+    "ParameterValue": "{{resolve:ssm:demo-db-pass:1}}"
   },
   {
     "ParameterKey": "MultiAZ",
