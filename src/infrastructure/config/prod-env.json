@@ -6,5 +6,9 @@
   {
     "ParameterKey": "EnvironmentType",
     "ParameterValue": "prod"
+  },
+  {
+    "ParameterKey": "WhiteListIPs",
+    "ParameterValue": "false"
   }
 ]

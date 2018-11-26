@@ -9,11 +9,11 @@
   },
   {
     "ParameterKey": "DatabaseUsername",
-    "ParameterValue": "by548wug4h"
+    "ParameterValue": "{{resolve:ssm:staging-db-user:1}}"
   },
   {
     "ParameterKey": "DatabasePassword",
-    "ParameterValue": "oK6vocpQU8Jyb7NJck7x7UZCfFHE4uHXd33o84Vmp"
+    "ParameterValue": "{{resolve:ssm-secure:stage-db-pass-secure:1}}"
   },
   {
     "ParameterKey": "MultiAZ",

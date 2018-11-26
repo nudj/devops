@@ -9,11 +9,11 @@
   },
   {
     "ParameterKey": "DatabaseUsername",
-    "ParameterValue": "yr7Jj2z2ps"
+    "ParameterValue": "{{resolve:ssm:prod-db-user:1}}"
   },
   {
     "ParameterKey": "DatabasePassword",
-    "ParameterValue": "x2UD8seWFzorsJ7Ejof84XNQKJ8J93mgZE7xNG9U"
+    "ParameterValue": "{{resolve:ssm-secure:prod-db-pass-secure:1}}"
   },
   {
     "ParameterKey": "MultiAZ",

@@ -21,20 +21,11 @@
 				"AllowedValues" : ["true", "false"]
 		},
 		"DatabaseUsername": {
-			"AllowedPattern": "[a-zA-Z0-9]+",
-			"ConstraintDescription": "must be between 1 to 16 alphanumeric characters.",
 			"Description": "The database admin account user name, between 1 to 16 alphanumeric characters.",
-			"MaxLength": "16",
-			"MinLength": "1",
 			"Type": "String"
 		},
 		"DatabasePassword": {
-			"AllowedPattern": "[a-zA-Z0-9]+",
-			"ConstraintDescription": "must be between 8 to 41 alphanumeric characters.",
 			"Description": "The database admin account password, between 8 to 41 alphanumeric characters.",
-			"MaxLength": "41",
-			"MinLength": "8",
-			"NoEcho": "true",
 			"Type": "String"
 		},
 		"DatabaseName": {
