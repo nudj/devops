@@ -13,7 +13,7 @@
   },
   {
     "ParameterKey": "DatabasePassword",
-    "ParameterValue": "{{resolve:ssm:prod-db-pass:1}}"
+    "ParameterValue": "{{resolve:ssm-secure:prod-db-pass-secure:1}}"
   },
   {
     "ParameterKey": "MultiAZ",

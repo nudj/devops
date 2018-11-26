@@ -13,7 +13,7 @@
   },
   {
     "ParameterKey": "DatabasePassword",
-    "ParameterValue": "{{resolve:ssm:stage-db-user:1}}"
+    "ParameterValue": "{{resolve:ssm-secure:stage-db-pass-secure:1}}"
   },
   {
     "ParameterKey": "MultiAZ",
