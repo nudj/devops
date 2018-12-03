@@ -17,11 +17,11 @@
   },
   {
     "ParameterKey": "ImageUrl",
-    "ParameterValue": "470250561590.dkr.ecr.eu-west-1.amazonaws.com/nudj/admin:0.0.0-build8"
+    "ParameterValue": "470250561590.dkr.ecr.eu-west-1.amazonaws.com/nudj/maintenance:0.3.0"
   },
   {
     "ParameterKey": "ServiceName",
-    "ParameterValue": "admin"
+    "ParameterValue": "maintenance"
   },
   {
     "ParameterKey": "ContainerPort",
@@ -37,7 +37,7 @@
   },
   {
     "ParameterKey": "ListenerRuleValue",
-    "ParameterValue": "admin.demo.aws.nudj.co"
+    "ParameterValue": "*.demo.aws.nudj.co"
   },
   {
     "ParameterKey": "ListenerRulePriority",
