@@ -1,0 +1,10 @@
+version: '1.0'
+
+steps:
+
+  create_vpc:
+    image: fdearle/sol-tools:0.0.4
+    working_directory: IMAGE_WORK_DIR
+    description: Bring down maintenance mode for environment
+    commands:
+      - sol layer destroy -l maintenance -e ${{ENVIRONMENT}}
