@@ -3,7 +3,7 @@ version: '1.0'
 steps:
 
   bastion_down:
-    image: fdearle/sol-tools:0.0.9
+    image: fdearle/sol-tools:0.0.10
     working_directory: IMAGE_WORK_DIR
     description: Tear down the bastion
     commands:

@@ -3,7 +3,7 @@ version: '1.0'
 steps:
 
   maintenance_down:
-    image: fdearle/sol-tools:0.0.4
+    image: fdearle/sol-tools:0.0.10
     working_directory: IMAGE_WORK_DIR
     description: Bring down maintenance mode for environment
     commands:
