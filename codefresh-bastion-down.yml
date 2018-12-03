@@ -2,7 +2,7 @@ version: '1.0'
 
 steps:
 
-  create_vpc:
+  bastion_down:
     image: fdearle/sol-tools:0.0.9
     working_directory: IMAGE_WORK_DIR
     description: Tear down the bastion

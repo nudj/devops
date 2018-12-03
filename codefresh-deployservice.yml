@@ -2,7 +2,7 @@ version: '1.0'
 
 steps:
 
-  deploy_web:
+  deploy_service:
     image: nudj/devops:aws
     working_directory: IMAGE_WORK_DIR
     description: Deploy web service

@@ -2,7 +2,7 @@ version: '1.0'
 
 steps:
 
-  create_vpc:
+  bastion_up:
     image: fdearle/sol-tools:0.0.4
     working_directory: IMAGE_WORK_DIR
     description: Spin up a bastion

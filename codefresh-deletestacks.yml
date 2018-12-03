@@ -2,7 +2,7 @@ version: '1.0'
 
 steps:
 
-  delete_vpc:
+  delete_stacks:
     image: fdearle/sol-tools:0.0.4
     working_directory: IMAGE_WORK_DIR
     description: Delete the VPC
