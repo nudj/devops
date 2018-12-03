@@ -78,6 +78,14 @@
         {
           "StackName": "dns",
           "Component": "api"
+        },
+        {
+          "StackName": "dns",
+          "Component": "web-beta"
+        },
+        {
+          "StackName": "dns",
+          "Component": "hire-beta"
         }
       ]
     },
@@ -101,6 +109,17 @@
         {
           "StackName": "container",
           "Component": "api"
+        }
+      ]
+    },
+    {
+      "LayerName": "maintenance",
+      "Depends": "service",
+      "EnvironmentSpecific": true,
+      "Components": [
+        {
+          "StackName": "container",
+          "Component": "maintenance"
         }
       ]
     },

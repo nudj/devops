@@ -5,7 +5,7 @@
   },
   {
     "ParameterKey": "EnvironmentType",
-    "ParameterValue": "staging"
+    "ParameterValue": "prod"
   },
   {
     "ParameterKey": "ContainerCpu",
@@ -37,11 +37,11 @@
   },
   {
     "ParameterKey": "ListenerRuleValue",
-    "ParameterValue": "admin.staging.aws.nudj.co"
+    "ParameterValue": "admin.prod.aws.nudj.co"
   },
   {
     "ParameterKey": "ListenerRulePriority",
-    "ParameterValue": "18"
+    "ParameterValue": "20"
   },
   {
     "ParameterKey": "HasSecondaryRule",
