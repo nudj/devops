@@ -41,7 +41,7 @@
   },
   {
     "ParameterKey": "ListenerRulePriority",
-    "ParameterValue": "18"
+    "ParameterValue": "20"
   },
   {
     "ParameterKey": "HasSecondaryRule",

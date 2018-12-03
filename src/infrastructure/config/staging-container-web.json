@@ -41,7 +41,23 @@
   },
   {
     "ParameterKey": "ListenerRulePriority",
-    "ParameterValue": "6"
+    "ParameterValue": "36"
+  },
+  {
+    "ParameterKey": "HasSecondaryRule",
+    "ParameterValue": "true"
+  },
+  {
+    "ParameterKey": "SecondaryListenerRuleType",
+    "ParameterValue": "host-header"
+  },
+  {
+    "ParameterKey": "SecondaryListenerRuleValue",
+    "ParameterValue": "web-beta.staging.aws.nudj.co"
+  },
+  {
+    "ParameterKey": "SecondaryListenerRulePriority",
+    "ParameterValue": "16"
   },
   {
     "ParameterKey": "HealthPing",

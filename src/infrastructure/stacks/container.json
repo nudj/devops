@@ -43,6 +43,29 @@
       "Description": "The priority of listener rule to apply",
       "Type": "Number"
     },
+    "HasSecondaryRule": {
+      "Description": "Has a secondary set of listener rules",
+      "Type": "String",
+      "Default": "false",
+      "AllowedValues": [
+        "true", "false"
+      ]
+    },
+    "SecondaryListenerRuleType": {
+      "Description": "The type of listener rule to apply",
+      "Type": "String",
+      "Default": "host-header"
+    },
+    "SecondaryListenerRuleValue": {
+      "Description": "The value of listener rule to apply",
+      "Type": "String",
+      "Default": ""
+    },
+    "SecondaryListenerRulePriority": {
+      "Description": "The priority of listener rule to apply",
+      "Type": "Number",
+      "Default": 100
+    },
     "HealthPing": {
       "Description": "Healthcheck URL",
       "Type": "String"
@@ -71,6 +94,9 @@
   "Conditions": {
     "UseHTTPS" : {
         "Fn::Equals" : [ {"Ref" : "Protocol"}, "HTTPS" ]
+    },
+    "HasSecondaryRule" : {
+        "Fn::Equals" : [ {"Ref" : "HasSecondaryRule"}, "true" ]
     }
   },
   "Resources": {
@@ -224,6 +250,34 @@
           }
         ],
         "Priority": { "Ref": "ListenerRulePriority"},
+        "ListenerArn": { "Fn::If":
+          [
+            "UseHTTPS",
+            {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-WebALBHttpsListener"}},
+            {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-WebALBHttpListener"}}
+          ]
+        }
+      }
+    },
+    "SecondaryLoadBalancerRule": {
+      "Condition": "HasSecondaryRule",
+      "Type": "AWS::ElasticLoadBalancingV2::ListenerRule",
+      "Properties": {
+        "Actions": [
+          {
+            "TargetGroupArn": { "Ref": "ServiceTargetGroup" },
+            "Type": "forward"
+          }
+        ],
+        "Conditions": [
+          {
+            "Field": { "Ref": "SecondaryListenerRuleType"},
+            "Values": [
+              { "Ref": "SecondaryListenerRuleValue"}
+            ]
+          }
+        ],
+        "Priority": { "Ref": "SecondaryListenerRulePriority"},
         "ListenerArn": { "Fn::If":
           [
             "UseHTTPS",
