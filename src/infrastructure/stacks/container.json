@@ -139,7 +139,7 @@
         "ExecutionRoleArn": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-ECSTaskExecutionRoleArn"}},
         "ContainerDefinitions": [
           {
-            "Name": {"Fn::Sub" : "${ServiceName}-${EnvironmentType}"},
+            "Name": {"Fn::Sub" : "${ServiceName}-${EnvironmentType}-container"},
             "Cpu": { "Ref": "ContainerCpu" },
             "Memory": { "Ref": "ContainerMemory" },
             "Image": { "Ref": "ImageUrl" },
@@ -202,7 +202,7 @@
     "ContainerService": {
       "Type": "AWS::ECS::Service",
       "Properties" : {
-        "ServiceName" : {"Fn::Sub" : "${ServiceName}-${EnvironmentType}"},
+        "ServiceName" : {"Fn::Sub" : "${ServiceName}-${EnvironmentType}-service"},
         "Cluster": {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}"},
         "LaunchType": "FARGATE",
         "DeploymentConfiguration": {
@@ -220,7 +220,7 @@
         "TaskDefinition": { "Ref": "ContainerTask" },
         "LoadBalancers": [
           {
-            "ContainerName": { "Fn::Join": ["-", [{ "Ref": "ServiceName" }, { "Ref": "EnvironmentType" } ]] },
+            "ContainerName": { "Fn::Join": ["-", [{ "Ref": "ServiceName" }, { "Ref": "EnvironmentType" }, "container" ]] },
             "ContainerPort": { "Ref": "ContainerPort" },
             "TargetGroupArn": { "Ref": "ServiceTargetGroup" }
           }
@@ -236,7 +236,7 @@
         "HealthCheckTimeoutSeconds": 10,
         "HealthyThresholdCount": 2,
         "TargetType": "ip",
-        "Name": {"Fn::Sub" : "${ServiceName}-${EnvironmentType}"},
+        "Name": {"Fn::Sub" : "${ServiceName}-${EnvironmentType}-targetgroup"},
         "Port": { "Ref": "ContainerPort" },
         "Protocol": "HTTP",
         "UnhealthyThresholdCount": 10,
