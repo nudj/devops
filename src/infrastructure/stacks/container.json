@@ -86,6 +86,14 @@
         "HTTP","HTTPS"
       ]
     },
+    "External": {
+      "AllowedValues": [
+        "true", "false"
+      ],
+      "Default": "true",
+      "Type": "String",
+      "Description": "Is this an internet facing or internal ALB"
+    },
     "EnvBucket": {
       "Description": "Bucket For CloudFormation transform snippet",
       "Type": "String"
@@ -97,6 +105,9 @@
     },
     "HasSecondaryRule" : {
         "Fn::Equals" : [ {"Ref" : "HasSecondaryRule"}, "true" ]
+    },
+    "IsExternal" : {
+        "Fn::Equals" : [ {"Ref" : "External"}, "true" ]
     }
   },
   "Resources": {
@@ -253,8 +264,8 @@
         "ListenerArn": { "Fn::If":
           [
             "UseHTTPS",
-            {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-WebALBHttpsListener"}},
-            {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-WebALBHttpListener"}}
+            { "Fn::If": [ "IsExternal", {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-WebALBHttpsListener"}}, {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-WebALBHttpsListenerInternal"}}] },
+            { "Fn::If": [ "IsExternal", {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-WebALBHttpListener"}}, {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-WebALBHttpListenerInternal"}}] }
           ]
         }
       }
@@ -281,8 +292,8 @@
         "ListenerArn": { "Fn::If":
           [
             "UseHTTPS",
-            {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-WebALBHttpsListener"}},
-            {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-WebALBHttpListener"}}
+            { "Fn::If": [ "IsExternal", {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-WebALBHttpsListener"}}, {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-WebALBHttpsListenerInternal"}}] },
+            { "Fn::If": [ "IsExternal", {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-WebALBHttpListener"}}, {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-${EnvironmentType}-WebALBHttpListenerInternal"}}] }
           ]
         }
       }
