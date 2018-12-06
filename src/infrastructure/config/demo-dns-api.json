@@ -22,5 +22,9 @@
   {
     "ParameterKey": "DomainName",
     "ParameterValue": "api.demo.nudj.internal."
+  },
+  {
+    "ParameterKey": "External",
+    "ParameterValue": "false"
   }
 ]

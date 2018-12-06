@@ -25,6 +25,11 @@
           "Depends": "env"
         },
         {
+          "StackName": "alb",
+          "Component": "albinternal",
+          "Depends": "env"
+        },
+        {
           "StackName": "env",
           "Component": "env"
         }

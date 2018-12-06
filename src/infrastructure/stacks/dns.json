@@ -26,9 +26,18 @@
       "Description": "The ID of the HostedZone",
       "Type": "String"
     },
-    "DomainName": {
-      "Description": "The Full DNS Name for new entry",
-      "Type": "String"
+    "External": {
+      "AllowedValues": [
+        "true", "false"
+      ],
+      "Default": "true",
+      "Type": "String",
+      "Description": "Is this an internaet facing or internal ALB"
+    },
+  },
+  "Conditions": {
+    "IsExternal" : {
+        "Fn::Equals" : [ {"Ref" : "External"}, "true" ]
     }
   },
   "Resources": {
@@ -43,12 +52,20 @@
               "Ref": "DomainName"
             },
             "AliasTarget": {
-              "DNSName": {
-                "Fn::ImportValue": { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebALBDomain" }
+              "DNSName": { "Fn::If":
+                [
+                  "IsExternal",
+                  { "Fn::ImportValue": { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebALBDomain" }},
+                  { "Fn::ImportValue": { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebALBDomainInternal" }}
+                ]
               },
-              "HostedZoneId": {
-                "Fn::ImportValue": { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebALBZone" }
-              }
+              "HostedZoneId":{ "Fn::If":
+                [
+                  "IsExternal",
+                  { "Fn::ImportValue": { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebALBZone" }},
+                  { "Fn::ImportValue": { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebALBZoneInternal" }}
+                ]
+              },
             },
             "Type": "A"
           }
