@@ -45,7 +45,7 @@
   },
   {
     "ParameterKey": "HasSecondaryRule",
-    "ParameterValue": "true"
+    "ParameterValue": "false"
   },
   {
     "ParameterKey": "HealthPing",
