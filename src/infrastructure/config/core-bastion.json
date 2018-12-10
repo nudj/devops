@@ -9,7 +9,7 @@
   },
   {
     "ParameterKey": "KeyPairName",
-    "ParameterValue": "bastion"
+    "ParameterValue": "bastionlaptop"
   },
   {
     "ParameterKey": "BastionInstanceType",
