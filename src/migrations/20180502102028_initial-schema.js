@@ -298,7 +298,8 @@ exports.up = async knex => {
         INTRO_DESCRIPTION,
         OUTRO_TITLE,
         OUTRO_DESCRIPTION,
-        SURVEY_QUESTIONS
+        SURVEY_QUESTIONS,
+        STATUS
       } = FIELDS[TABLES.SURVEYS]
 
       defaultConfig(table, knex)
@@ -309,6 +310,7 @@ exports.up = async knex => {
       table.string(OUTRO_TITLE).nullable()
       table.text(OUTRO_DESCRIPTION).nullable()
       table.json(SURVEY_QUESTIONS).notNullable().comment('Array of surveyQuestion ids denoting their order')
+      table.enum(STATUS, ENUMS.SURVEY_STATUS_TYPES.values).defaultTo(ENUMS.SURVEY_STATUS_TYPES.DRAFT).notNullable()
       table.unique(SLUG, INDICES[TABLES.SURVEYS][SLUG].name)
     })
 
