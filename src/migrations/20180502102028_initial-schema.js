@@ -47,7 +47,8 @@ exports.up = async knex => {
         CLIENT,
         HASH,
         ONBOARDED,
-        ATS
+        ATS,
+        SYNCING
       } = FIELDS[TABLES.COMPANIES]
 
       defaultConfig(table, knex)
@@ -61,6 +62,7 @@ exports.up = async knex => {
       urlType(URL, table, knex).nullable()
       table.boolean(CLIENT).defaultTo(false).notNullable()
       table.boolean(ONBOARDED).defaultTo(false).notNullable()
+      table.boolean(SYNCING).defaultTo(false).notNullable()
       table.unique(NAME, INDICES[TABLES.COMPANIES][NAME].name)
       table.unique(SLUG, INDICES[TABLES.COMPANIES][SLUG].name)
       table.enum(ATS, ENUMS.COMPANY_INTEGRATION_TYPES.values).nullable()
@@ -495,13 +497,13 @@ exports.up = async knex => {
     .createTable(TABLES.REFERRAL_KEY_TO_SLUG_MAP, table => {
       const {
         REFERRAL_KEY,
-        JOB_SLUG
+        SLUG
       } = FIELDS[TABLES.REFERRAL_KEY_TO_SLUG_MAP]
 
       defaultConfig(table, knex)
       table.string(REFERRAL_KEY).primary('byReferralKey')
-      table.string(JOB_SLUG).notNullable()
-      table.unique(JOB_SLUG, INDICES[TABLES.REFERRAL_KEY_TO_SLUG_MAP][JOB_SLUG].name)
+      table.string(SLUG).notNullable()
+      table.unique(SLUG, INDICES[TABLES.REFERRAL_KEY_TO_SLUG_MAP][SLUG].name)
     })
 
     .createTable(TABLES.INTROS, table => {
@@ -533,10 +535,25 @@ exports.up = async knex => {
       table.enum(TYPE, ENUMS.COMPANY_INTEGRATION_TYPES.values).notNullable()
       table.json(DATA).notNullable().comment('Object of integration authorisation secrets')
     })
+
+    .createTable(TABLES.ATS_JOBS, table => {
+      const {
+        COMPANY,
+        JOB_ID,
+        EXTERNAL_ID
+      } = FIELDS[TABLES.ATS_JOBS]
+
+      defaultConfig(table, knex)
+      defaultFields(table, knex)
+      relationType(COMPANY, TABLES.COMPANIES, table, knex).notNullable()
+      relationType(JOB_ID, TABLES.JOBS, table, knex).notNullable()
+      table.string(EXTERNAL_ID).notNullable()
+    })
 }
 
 exports.down = async knex => {
   await knex.schema
+    .dropTable(TABLES.ATS_JOBS)
     .dropTable(TABLES.COMPANY_INTEGRATIONS)
     .dropTable(TABLES.INTROS)
     .dropTable(TABLES.REFERRAL_KEY_TO_SLUG_MAP)

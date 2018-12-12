@@ -36,7 +36,8 @@ const TABLES = {
   SURVEY_ANSWER_CONNECTIONS: 'surveyAnswerConnections',
   SURVEY_QUESTIONS: 'surveyQuestions',
   SURVEY_QUESTION_TAGS: 'surveyQuestionTags',
-  TAGS: 'tags'
+  TAGS: 'tags',
+  ATS_JOBS: 'atsJobs'
 }
 const TABLES_INVERTED = invert(TABLES)
 const FIELDS = {
@@ -57,6 +58,11 @@ const FIELDS = {
     JOB: 'job',
     REFERRAL: 'referral'
   },
+  [TABLES.ATS_JOBS]: {
+    COMPANY: 'company',
+    JOB_ID: 'jobId',
+    EXTERNAL_ID: 'externalId'
+  },
   [TABLES.COMPANIES]: {
     NAME: 'name',
     SLUG: 'slug',
@@ -67,7 +73,8 @@ const FIELDS = {
     CLIENT: 'client',
     HASH: 'hash',
     ONBOARDED: 'onboarded',
-    ATS: 'ats'
+    ATS: 'ats',
+    SYNCING: 'syncing'
   },
   [TABLES.COMPANY_INTEGRATIONS]: {
     TYPE: 'type',
@@ -167,7 +174,7 @@ const FIELDS = {
   },
   [TABLES.REFERRAL_KEY_TO_SLUG_MAP]: {
     REFERRAL_KEY: 'referralKey',
-    JOB_SLUG: 'jobSlug'
+    SLUG: 'slug'
   },
   [TABLES.RELATED_JOBS]: {
     FROM: 'from',
@@ -430,9 +437,9 @@ const INDICES = merge(
         name: `${TABLES.REFERRAL_KEY_TO_SLUG_MAP}ByReferralKey`,
         fields: [F.REFERRAL_KEY_TO_SLUG_MAP.REFERRAL_KEY]
       },
-      [F.REFERRAL_KEY_TO_SLUG_MAP.JOB_SLUG]: {
+      [F.REFERRAL_KEY_TO_SLUG_MAP.SLUG]: {
         name: `${TABLES.REFERRAL_KEY_TO_SLUG_MAP}ByJobSlug`,
-        fields: [F.MESSAGE_EVENTS.JOB_SLUG]
+        fields: [F.REFERRAL_KEY_TO_SLUG_MAP.SLUG]
       }
     }
   }
@@ -475,10 +482,6 @@ const SLUG_GENERATORS = {
   [TABLES.REFERRALS]: {
     generator: slugGenerators.random
   },
-  [TABLES.SURVEY_QUESTIONS]: {
-    generator: slugGenerators.field(FIELDS[TABLES.SURVEY_QUESTIONS].TITLE),
-    index: 'surveyQuestionsBySlugSurvey'
-  },
   [TABLES.COMPANIES]: {
     generator: slugGenerators.field(FIELDS[TABLES.COMPANIES].NAME),
     index: 'companiesBySlug'
@@ -491,9 +494,16 @@ const SLUG_GENERATORS = {
     generator: slugGenerators.field(FIELDS[TABLES.SURVEYS].INTRO_TITLE),
     index: 'surveysBySlug'
   },
+  [TABLES.SURVEY_QUESTIONS]: {
+    generator: slugGenerators.field(FIELDS[TABLES.SURVEY_QUESTIONS].TITLE),
+    index: 'surveyQuestionsBySlug'
+  },
   [TABLES.ACCESS_REQUESTS]: {
     generator: slugGenerators.random
   }
+}
+const SLUG_FILTER_BY = {
+  surveyQuestions: ['survey']
 }
 const COLLECTIONS = {
   JOB_VIEW_EVENTS: 'jobViewEvents',
@@ -508,6 +518,7 @@ module.exports = {
   ENUMS,
   INDICES,
   SLUG_GENERATORS,
+  SLUG_FILTER_BY,
   COLLECTIONS,
 
   // functions
