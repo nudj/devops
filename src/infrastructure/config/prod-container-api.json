@@ -17,7 +17,7 @@
   },
   {
     "ParameterKey": "ImageUrl",
-    "ParameterValue": "470250561590.dkr.ecr.eu-west-1.amazonaws.com/nudj/api:0.0.0-build5"
+    "ParameterValue": "470250561590.dkr.ecr.eu-west-1.amazonaws.com/nudj/api:27.0.2-build5"
   },
   {
     "ParameterKey": "ServiceName",
