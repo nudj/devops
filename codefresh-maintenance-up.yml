@@ -1,0 +1,10 @@
+version: '1.0'
+
+steps:
+
+  maintenance_up:
+    image: fdearle/sol-tools:0.0.12
+    working_directory: IMAGE_WORK_DIR
+    description: Put environment in maintenance mode
+    commands:
+      - sol layer build -l maintenance -e ${{ENVIRONMENT}}

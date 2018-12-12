@@ -1,0 +1,30 @@
+[
+  {
+    "ParameterKey": "VPCStackName",
+    "ParameterValue": "core-vpc"
+  },
+  {
+    "ParameterKey": "EnvironmentType",
+    "ParameterValue": "prod"
+  },
+  {
+    "ParameterKey": "ServiceName",
+    "ParameterValue": "api"
+  },
+  {
+    "ParameterKey": "HostedZoneName",
+    "ParameterValue": "nudj.internal."
+  },
+  {
+    "ParameterKey": "HostedZoneID",
+    "ParameterValue": "Z17ZKK7DWSFC5S"
+  },
+  {
+    "ParameterKey": "DomainName",
+    "ParameterValue": "api.nudj.internal."
+  },
+  {
+    "ParameterKey": "External",
+    "ParameterValue": "false"
+  }
+]

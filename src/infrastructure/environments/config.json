@@ -1,0 +1,151 @@
+{
+  "Layers": [
+    {
+      "LayerName": "core",
+      "Components": [
+        {
+          "StackName": "vpc",
+          "Component": "vpc"
+        }
+      ]
+    },
+    {
+      "LayerName": "env",
+      "Depends": "core",
+      "EnvironmentSpecific": true,
+      "Components": [
+        {
+          "StackName": "ecs",
+          "Component": "ecs",
+          "Depends": "alb"
+        },
+        {
+          "StackName": "alb",
+          "Component": "alb",
+          "Depends": "env"
+        },
+        {
+          "StackName": "alb",
+          "Component": "albinternal",
+          "Depends": "env"
+        },
+        {
+          "StackName": "env",
+          "Component": "env"
+        }
+      ]
+    },
+    {
+      "LayerName": "db",
+      "Depends": "env",
+      "EnvironmentSpecific": true,
+      "Components": [
+        {
+          "StackName": "aurora",
+          "Component": "aurora",
+          "Stateful": true,
+          "SnapshotOnTeardown": true
+        },
+        {
+          "StackName": "redis",
+          "Component": "redis"
+        }
+      ]
+    },
+    {
+      "LayerName": "keep",
+      "Depends": "env",
+      "EnvironmentSpecific": true,
+      "Components": [
+        {
+          "StackName": "keep",
+          "Component": "keep"
+        }
+      ]
+    },
+    {
+      "LayerName": "dns",
+      "Depends": "env",
+      "EnvironmentSpecific": true,
+      "Components": [
+        {
+          "StackName": "dns",
+          "Component": "web"
+        },
+        {
+          "StackName": "dns",
+          "Component": "hire"
+        },
+        {
+          "StackName": "dns",
+          "Component": "admin"
+        },
+        {
+          "StackName": "dns",
+          "Component": "api"
+        },
+        {
+          "StackName": "dns",
+          "Component": "web-beta"
+        },
+        {
+          "StackName": "dns",
+          "Component": "hire-beta"
+        }
+      ]
+    },
+    {
+      "LayerName": "service",
+      "Depends": "db",
+      "EnvironmentSpecific": true,
+      "Components": [
+        {
+          "StackName": "container",
+          "Component": "web"
+        },
+        {
+          "StackName": "container",
+          "Component": "hire"
+        },
+        {
+          "StackName": "container",
+          "Component": "admin"
+        },
+        {
+          "StackName": "container",
+          "Component": "api"
+        }
+      ]
+    },
+    {
+      "LayerName": "maintenance",
+      "Depends": "service",
+      "EnvironmentSpecific": true,
+      "Components": [
+        {
+          "StackName": "container",
+          "Component": "maintenance"
+        }
+      ]
+    },
+    {
+      "LayerName": "tools",
+      "Depends": "env",
+      "EnvironmentSpecific": true,
+      "Components": [
+        {
+          "StackName": "codebuild",
+          "Component": "migrate"
+        },
+        {
+          "StackName": "codebuild",
+          "Component": "evacuate"
+        },
+        {
+          "StackName": "codebuild",
+          "Component": "confirm"
+        }
+      ]
+    }
+  ]
+}

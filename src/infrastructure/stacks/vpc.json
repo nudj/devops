@@ -1,0 +1,380 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Underlay VPC & Public subnets [01-create-vpc]",
+    "Metadata": {
+        "AWS::CloudFormation::Interface": {
+            "ParameterGroups": [
+                {
+                    "Label": {
+                        "default": "Network Configuration"
+                    },
+                    "Parameters": [
+                        "VPCCIDRROOT"
+                    ]
+                }
+            ],
+            "ParameterLabels": {
+                "VPCCIDRROOT": {
+                    "default": "VPC CIDR ROOT"
+                }
+            }
+        }
+    },
+    "Parameters": {
+        "VPCCIDRROOT": {
+            "AllowedPattern": "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){1}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$",
+            "Default": "10.4",
+            "Description": "CIDR block prefix for the VPC, should be first two '.' seperated values",
+            "Type": "String"
+        }
+    },
+    "Resources": {
+        "DHCPOptions": {
+            "Type": "AWS::EC2::DHCPOptions",
+            "Properties": {
+                "DomainNameServers": [
+                    "AmazonProvidedDNS"
+                ]
+            }
+        },
+        "VPC": {
+            "Type": "AWS::EC2::VPC",
+            "Properties": {
+                "CidrBlock": { "Fn::Sub": "${VPCCIDRROOT}.0.0/16" },
+                "EnableDnsSupport": "true",
+                "EnableDnsHostnames": "true",
+                "Tags" : [ {"Key" : "Name", "Value" : { "Ref": "AWS::StackName" }} ]
+            }
+        },
+        "VPCDHCPOptionsAssociation": {
+            "Type": "AWS::EC2::VPCDHCPOptionsAssociation",
+            "DependsOn": "VPC",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "VPC"
+                },
+                "DhcpOptionsId": {
+                    "Ref": "DHCPOptions"
+                }
+            }
+        },
+        "InternetGateway": {
+            "Type": "AWS::EC2::InternetGateway",
+            "Properties": {
+                "Tags": [
+                    {
+                        "Key": "Network",
+                        "Value": "Public"
+                    }
+                ]
+            }
+        },
+        "VPCGatewayAttachment": {
+            "Type": "AWS::EC2::VPCGatewayAttachment",
+            "DependsOn": "InternetGateway",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "VPC"
+                },
+                "InternetGatewayId": {
+                    "Ref": "InternetGateway"
+                }
+            }
+        },
+        "PublicSubnet1": {
+            "Type": "AWS::EC2::Subnet",
+            "DependsOn": "VPC",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "VPC"
+                },
+                "CidrBlock": { "Fn::Sub": "${VPCCIDRROOT}.0.0/20" },
+                "AvailabilityZone": {
+                  "Fn::Select": [
+                    1,
+                    {
+                      "Fn::GetAZs": {
+                        "Ref": "AWS::Region"
+                      }
+                    }
+                  ]
+                },
+                "Tags": [
+                    {
+                        "Key": "Network",
+                        "Value": "Public"
+                    },
+                    {
+                        "Key": "Role",
+                        "Value": "Public"
+                    },
+                    {
+                        "Key": "Name",
+                        "Value": { "Fn::Sub": "${AWS::StackName}-public-1-new-join" }
+                    }
+                ],
+                "MapPublicIpOnLaunch": true
+            }
+        },
+        "PublicSubnet2": {
+            "Type": "AWS::EC2::Subnet",
+            "DependsOn": "VPC",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "VPC"
+                },
+                "CidrBlock": { "Fn::Sub": "${VPCCIDRROOT}.16.0/20" },
+                "AvailabilityZone": {
+                    "Fn::Select": [
+                        "2",
+                        {
+                          "Fn::GetAZs": {
+                            "Ref": "AWS::Region"
+                          }
+                        }
+                    ]
+                },
+                "Tags": [
+                    {
+                        "Key": "Network",
+                        "Value": "Public"
+                    },
+                    {
+                        "Key": "Role",
+                        "Value": "Public"
+                    },
+                    {
+                        "Key": "Name",
+                        "Value": { "Fn::Sub": "${AWS::StackName}-public-2-new-join" }
+                    }
+                ],
+                "MapPublicIpOnLaunch": true
+            }
+        },
+        "PublicSubnetRouteTable": {
+            "Type": "AWS::EC2::RouteTable",
+            "DependsOn": "VPC",
+            "Properties": {
+                "VpcId": {
+                    "Ref": "VPC"
+                },
+                "Tags": [
+                    {
+                        "Key": "Network",
+                        "Value": "Public"
+                    }
+                ]
+            }
+        },
+        "PublicSubnetRoute": {
+            "DependsOn": "VPCGatewayAttachment",
+            "Type": "AWS::EC2::Route",
+            "Properties": {
+                "RouteTableId": {
+                    "Ref": "PublicSubnetRouteTable"
+                },
+                "DestinationCidrBlock": "0.0.0.0/0",
+                "GatewayId": {
+                    "Ref": "InternetGateway"
+                }
+            }
+        },
+        "PublicSubnet1RouteTableAssociation": {
+            "DependsOn": ["PublicSubnet1", "PublicSubnetRouteTable"],
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "PublicSubnet1"
+                },
+                "RouteTableId": {
+                    "Ref": "PublicSubnetRouteTable"
+                }
+            }
+        },
+        "PublicSubnet2RouteTableAssociation": {
+            "DependsOn": ["PublicSubnet2", "PublicSubnetRouteTable"],
+            "Type": "AWS::EC2::SubnetRouteTableAssociation",
+            "Properties": {
+                "SubnetId": {
+                    "Ref": "PublicSubnet2"
+                },
+                "RouteTableId": {
+                    "Ref": "PublicSubnetRouteTable"
+                }
+            }
+        },
+        "NAT1EIP": {
+            "DependsOn": "VPCGatewayAttachment",
+            "Type": "AWS::EC2::EIP",
+            "Properties": {
+                "Domain": "vpc"
+            }
+        },
+        "NATGateway1": {
+            "DependsOn": "PublicSubnet1",
+            "Type": "AWS::EC2::NatGateway",
+            "Properties": {
+                "AllocationId": {
+                    "Fn::GetAtt": [
+                        "NAT1EIP",
+                        "AllocationId"
+                    ]
+                },
+                "SubnetId": {
+                    "Ref": "PublicSubnet1"
+                }
+            }
+        },
+        "CloudfrontHttp": {
+            "DependsOn": "VPC",
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "cloudfront-http-ip-ranges",
+                "SecurityGroupEgress": [
+                    {
+                        "CidrIp": "0.0.0.0/0",
+                        "FromPort": -1,
+                        "IpProtocol": "-1",
+                        "ToPort": -1
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "VPC"
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "cloudfront"
+                    },
+                    {
+                        "Key" : "Protocol",
+                        "Value" : "http"
+                    },
+                    {
+                        "Key" : "AutoUpdate",
+                        "Value" : "true"
+                    }
+                ]
+            }
+        },
+        "CloudfrontHttps": {
+            "DependsOn": "VPC",
+            "Type": "AWS::EC2::SecurityGroup",
+            "Properties": {
+                "GroupDescription": "cloudfront-https-ip-ranges",
+                "SecurityGroupEgress": [
+                    {
+                        "CidrIp": "0.0.0.0/0",
+                        "FromPort": -1,
+                        "IpProtocol": "-1",
+                        "ToPort": -1
+                    }
+                ],
+                "VpcId": {
+                    "Ref": "VPC"
+                },
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "cloudfront"
+                    },
+                    {
+                        "Key" : "Protocol",
+                        "Value" : "https"
+                    },
+                    {
+                        "Key" : "AutoUpdate",
+                        "Value" : "true"
+                    }
+                ]
+            }
+        }
+    },
+    "Outputs": {
+        "PublicSubnet1ID": {
+            "Description": "Public subnet 1 ID in Availability Zone 1",
+            "Value": {
+                "Ref": "PublicSubnet1"
+            },
+            "Export" : {
+                "Name" : { "Fn::Sub": "${AWS::StackName}-PublicSubnet1ID" }
+            }
+        },
+        "PublicSubnet2ID": {
+            "Description": "Public subnet 2 ID in Availability Zone 2",
+            "Value": {
+                "Ref": "PublicSubnet2"
+            },
+            "Export" : {
+                "Name" : { "Fn::Sub": "${AWS::StackName}-PublicSubnet2ID" }
+            }
+        },
+        "VPCID": {
+            "Value": {
+                "Ref": "VPC"
+            },
+            "Description": "VPC ID",
+            "Export" : {
+                "Name" : { "Fn::Sub": "${AWS::StackName}-VPCID" }
+            }
+        },
+        "VPCCidr": {
+          "Value": { "Fn::GetAtt": ["VPC", "CidrBlock" ]},
+          "Description": "VPC Cidr block",
+          "Export" : {
+            "Name" : { "Fn::Sub": "${AWS::StackName}-VPCCidr" }
+          }
+        },
+        "VpcCidrRoot": {
+            "Value": {
+                "Ref": "VPCCIDRROOT"
+            },
+            "Description": "VPC CIDR Root",
+            "Export" : {
+                "Name" : { "Fn::Sub": "${AWS::StackName}-VPCCIDRROOT" }
+            }
+        },
+        "AvailabilityZones": {
+            "Value": {
+              "Fn::Join": [
+                  ",",
+                  [
+                    { "Fn::GetAtt" : [ "PublicSubnet1", "AvailabilityZone" ] },
+                    { "Fn::GetAtt" : [ "PublicSubnet2", "AvailabilityZone" ] }
+                  ]
+              ]
+            },
+            "Description": "VPC Subnet AvailabilityZones (comma separated list)",
+            "Export" : {
+                "Name" : { "Fn::Sub": "${AWS::StackName}-AvailabilityZones" }
+            }
+        },
+        "NatGatewayZone1": {
+            "Value": {
+                "Ref": "NATGateway1"
+            },
+            "Description": "Nat Gateway in Zone 1",
+            "Export" : {
+                "Name" : { "Fn::Sub": "${AWS::StackName}-NatGatewayZone1" }
+            }
+        },
+        "CloudfrontHttpSG": {
+            "Value": {
+                "Ref": "CloudfrontHttp"
+            },
+            "Description": "Cloudfront http Security Group",
+            "Export" : {
+                "Name" : { "Fn::Sub": "${AWS::StackName}-CloudfrontHttpSG" }
+            }
+        },
+        "CloudfrontHttpsSG": {
+            "Value": {
+                "Ref": "CloudfrontHttps"
+            },
+            "Description": "Cloudfront https Security Group",
+            "Export" : {
+                "Name" : { "Fn::Sub": "${AWS::StackName}-CloudfrontHttpsSG" }
+            }
+        }
+    }
+}

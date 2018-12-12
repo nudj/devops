@@ -6,6 +6,17 @@ steps:
     title: Build
     type: build
     image_name: nudj/devops
-    tag: test
+    tag: aws
     working_directory: ${{main_clone}}
     dockerfile: Dockerfile
+    build_arguments:
+      - NPM_TOKEN=${{NPM_TOKEN}}
+
+  push:
+    title: Push
+    type: push
+    candidate: '${{build}}'
+    tag: aws
+    credentials:
+      username: '${{dockerUsername}}'
+      password: '${{dockerPassword}}'

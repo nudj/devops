@@ -1,0 +1,26 @@
+[
+  {
+    "ParameterKey": "VPCStackName",
+    "ParameterValue": "core-vpc"
+  },
+  {
+    "ParameterKey": "EnvironmentType",
+    "ParameterValue": "prod"
+  },
+  {
+    "ParameterKey": "ProjectName",
+    "ParameterValue": "migrate"
+  },
+  {
+    "ParameterKey": "Description",
+    "ParameterValue": "Migration Job"
+  },
+  {
+    "ParameterKey": "GithubRepo",
+    "ParameterValue": "https://github.com/nudj/devops.git"
+  },
+  {
+    "ParameterKey": "BuildSpec",
+    "ParameterValue": "codebuild-migrate.yml"
+  }
+]

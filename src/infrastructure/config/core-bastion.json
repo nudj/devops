@@ -1,0 +1,18 @@
+[
+  {
+    "ParameterKey": "VPCStackName",
+    "ParameterValue": "core-vpc"
+  },
+  {
+    "ParameterKey": "RemoteCIDRBlock",
+    "ParameterValue": "185.44.76.119/32"
+  },
+  {
+    "ParameterKey": "KeyPairName",
+    "ParameterValue": "bastionlaptop"
+  },
+  {
+    "ParameterKey": "BastionInstanceType",
+    "ParameterValue": "t2.nano"
+  }
+]

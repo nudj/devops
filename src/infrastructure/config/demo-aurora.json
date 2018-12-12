@@ -1,0 +1,26 @@
+[
+  {
+    "ParameterKey": "VPCStackName",
+    "ParameterValue": "core-vpc"
+  },
+  {
+    "ParameterKey": "EnvironmentType",
+    "ParameterValue": "demo"
+  },
+  {
+    "ParameterKey": "DatabaseUsername",
+    "ParameterValue": "{{resolve:ssm:demo-db-user:1}}"
+  },
+  {
+    "ParameterKey": "DatabasePassword",
+    "ParameterValue": "{{resolve:ssm-secure:demo-db-pass-secure:1}}"
+  },
+  {
+    "ParameterKey": "MultiAZ",
+    "ParameterValue": "false"
+  },
+  {
+    "ParameterKey": "DatabaseName",
+    "ParameterValue": "nudj"
+  }
+]

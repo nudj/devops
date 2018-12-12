@@ -1,0 +1,22 @@
+[
+  {
+    "ParameterKey": "VPCStackName",
+    "ParameterValue": "core-vpc"
+  },
+  {
+    "ParameterKey": "EnvironmentType",
+    "ParameterValue": "staging"
+  },
+  {
+    "ParameterKey": "WhiteListIPs",
+    "ParameterValue": "true"
+  },
+  {
+    "ParameterKey": "IPWhiteList1",
+    "ParameterValue": "109.231.193.164/32"
+  },
+  {
+    "ParameterKey": "IPWhiteList2",
+    "ParameterValue": "185.44.76.119/32"
+  }
+]

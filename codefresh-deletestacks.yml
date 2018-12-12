@@ -1,0 +1,14 @@
+version: '1.0'
+
+steps:
+
+  delete_stacks:
+    image: fdearle/sol-tools:0.0.10
+    working_directory: IMAGE_WORK_DIR
+    description: Delete the VPC
+    commands:
+      # - sol layer destroy -l tools -e ${{ENVIRONMENT}}
+      - sol layer destroy -l service -e ${{ENVIRONMENT}}
+      # - sol layer destroy -l db -e ${{ENVIRONMENT}}
+      # - sol layer destroy -l env -e ${{ENVIRONMENT}}
+      # - sol layer destroy -l core

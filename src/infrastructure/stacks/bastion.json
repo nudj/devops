@@ -1,0 +1,84 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Install a bastion server in the public subnet of the VPC",
+    "Parameters": {
+      "VPCStackName": {
+        "Description": "The name of the target VPC stack to deploy this ELB into",
+        "Type": "String"
+      },
+      "RemoteCIDRBlock" : {
+          "Description" : "Lockdown SSH access to the bastion host (default can be accessed from anywhere)",
+          "Type" : "String",
+          "MinLength": "9",
+          "MaxLength": "18",
+          "Default" : "89.127.64.227/32",
+          "AllowedPattern" : "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+          "ConstraintDescription" : "must be a valid CIDR range of the form x.x.x.x/x."
+      },
+      "KeyPairName": {
+          "Description": "Public/private key pairs allow you to securely connect to your NAT instance after it launches. This is used only if the region does not support NAT gateways.",
+          "Type": "AWS::EC2::KeyPair::KeyName"
+      },
+      "BastionInstanceType" : {
+          "Description" : "Bastion Host EC2 instance type",
+          "Type" : "String",
+          "Default" : "t2.nano",
+          "AllowedValues" : [ "t2.nano", "t1.micro"],
+          "ConstraintDescription" : "must be a valid EC2 instance type."
+      }
+    },
+    "Resources": {
+        "BastionHost" : {
+            "Type" : "AWS::EC2::Instance",
+            "Properties" : {
+                "InstanceType" : { "Ref" : "BastionInstanceType" },
+                "KeyName"  : { "Ref" : "KeyPairName" },
+                "SubnetId" : {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-PublicSubnet1ID"}},
+                "ImageId"  : "ami-f95ef58a",
+                "SecurityGroupIds" : [{ "Ref" : "BastionSecurityGroup" }],
+                "Tags": [
+                    {
+                        "Key": "Name",
+                        "Value": "bastion"
+                    }
+                ]
+            }
+        },
+        "BastionSecurityGroup" : {
+            "Type" : "AWS::EC2::SecurityGroup",
+            "Properties" : {
+                "GroupDescription" : "Enable access to the Bastion host",
+                "VpcId" :  {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCID"}},
+                "SecurityGroupIngress" : [ { "IpProtocol" : "tcp", "FromPort" : "22",  "ToPort" : "22",  "CidrIp" : { "Ref" : "RemoteCIDRBlock" }} ],
+                "SecurityGroupEgress"  : [ { "IpProtocol" : "tcp", "FromPort" : "22",  "ToPort" : "22",  "CidrIp" : {"Fn::ImportValue" : { "Fn::Sub": "${VPCStackName}-VPCCidr" }}} ]
+            }
+        }
+    },
+    "Outputs": {
+        "BASTSGID" : {
+            "Value": {
+                "Ref" : "BastionSecurityGroup"
+            },
+            "Description": "The ID of the Bastion secruity group",
+            "Export" : {
+                "Name" : { "Fn::Sub": "${AWS::StackName}-BASTSGID" }
+            }
+        },
+        "BastionPublicIP" : {
+           "Value": { "Fn::GetAtt" : [ "BastionHost", "PublicIp" ]},
+           "Description": "The IP address of the Bastion secruity group",
+           "Export" : {
+               "Name" : { "Fn::Sub": "${AWS::StackName}-BastionPublicIP" }
+           }
+        },
+        "RemoteCIDRBlock": {
+            "Value": {
+                "Ref" : "RemoteCIDRBlock"
+            },
+            "Description": "The CIDR to allow access for the Bastion secruity group",
+            "Export" : {
+                "Name" : { "Fn::Sub": "${AWS::StackName}-RemoteCIDRBlock" }
+            }
+        }
+    }
+}

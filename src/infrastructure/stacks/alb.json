@@ -1,0 +1,209 @@
+{
+  "AWSTemplateFormatVersion" : "2010-09-09",
+  "Description" : "Application Load Balancer [03-create-elb]",
+  "Parameters" : {
+    "VPCStackName": {
+      "Description": "The name of the target VPC stack to deploy this ELB into",
+      "Type": "String"
+    },
+    "EnvironmentType": {
+      "Description": "Name of the environment to build : demo, development, staging performance or production",
+      "Type": "String",
+      "Default": "perf",
+      "AllowedValues": [
+        "staging", "prod", "test", "demo", "perf", "feat1", "feat2", "feat3", "feat4", "feat5", "feat6"
+      ]
+    },
+    "CertificateArn": {
+      "Description": "Certificate Arn for the cert for this Environment e.g. *.staging.aws.nudj.co",
+      "Type": "String"
+    },
+    "UseHTTPS": {
+      "AllowedValues": [
+        "true", "false"
+      ],
+      "Default": "true",
+      "Type": "String",
+      "Description": "Use HTTPS for ALB"
+    },
+    "External": {
+      "AllowedValues": [
+        "true", "false"
+      ],
+      "Default": "true",
+      "Type": "String",
+      "Description": "Is this an internaet facing or internal ALB"
+    }
+  },
+  "Conditions": {
+    "IsHTTPS" : {
+        "Fn::Equals" : [ {"Ref" : "UseHTTPS"}, "true" ]
+    },
+    "IsExternal" : {
+        "Fn::Equals" : [ {"Ref" : "External"}, "true" ]
+    }
+  },
+  "Resources" : {
+    "WebALB" : {
+      "Type" : "AWS::ElasticLoadBalancingV2::LoadBalancer",
+      "Properties" : {
+        "Name": { "Fn::If":
+          [
+            "IsExternal",
+            { "Fn::Join": ["-", ["web-alb", { "Ref": "EnvironmentType" } ]] },
+            { "Fn::Join": ["-", ["web-albinternal", { "Ref": "EnvironmentType" } ]] },
+          ]
+        },
+        "Scheme" : { "Fn::If":
+          [
+            "IsExternal",
+            "internet-facing",
+            "internal"
+          ]
+        },
+        "SecurityGroups": [ {"Fn::ImportValue" : { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-ELBSecurityGroupID" }} , {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-CloudfrontHttpSG"}} , {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-CloudfrontHttpsSG"}} ],
+        "Subnets" : [ {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-PublicSubnet1ID"}}, {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-PublicSubnet2ID"}} ],
+        "Tags" : [{"Key" : "Network", "Value" : "public"}]
+      }
+    },
+    "WebALBHttpListener": {
+      "Type": "AWS::ElasticLoadBalancingV2::Listener",
+      "Properties": {
+        "DefaultActions": [
+          {
+            "Type": "forward",
+            "TargetGroupArn": {
+              "Ref": "WebTargetGroup"
+            }
+          }
+        ],
+        "LoadBalancerArn": {
+          "Ref": "WebALB"
+        },
+        "Port": "80",
+        "Protocol": "HTTP"
+      }
+    },
+    "WebALBHttpsListener": {
+      "Type": "AWS::ElasticLoadBalancingV2::Listener",
+      "Properties": {
+        "DefaultActions": [
+          {
+              "Type": "forward",
+              "TargetGroupArn": {
+              "Ref": "WebTargetGroup"
+            }
+          }
+        ],
+        "LoadBalancerArn": {
+          "Ref": "WebALB"
+        },
+        "Port": "443",
+        "Protocol": "HTTPS",
+        "Certificates": [{"CertificateArn": { "Ref": "CertificateArn" }}]
+      }
+    },
+    "WebTargetGroup": {
+      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+      "Properties": {
+        "HealthCheckIntervalSeconds": 10,
+        "HealthCheckPath": "/index.html",
+        "HealthCheckProtocol": "HTTP",
+        "HealthCheckTimeoutSeconds": 5,
+        "HealthyThresholdCount": 2,
+        "Name": { "Fn::If":
+          [
+            "IsExternal",
+            { "Fn::Sub": "WebTargetGroup-${EnvironmentType}" },
+            { "Fn::Sub": "WebTargetGroupInternal-${EnvironmentType}" },
+          ]
+        },
+        "Port": 80,
+        "Protocol": "HTTP",
+        "UnhealthyThresholdCount": 2,
+        "VpcId": {"Fn::ImportValue" : {"Fn::Sub" : "${VPCStackName}-VPCID"}}
+      }
+    }
+  },
+  "Outputs" : {
+    "WebFQDN" : { "Value": { "Fn::GetAtt" : [ "WebALB", "DNSName" ]} },
+    "WebALBName" : {
+      "Value": { "Fn::Join": ["-", ["web-alb", { "Ref": "EnvironmentType" } ]] },
+      "Description": "Name of Web ALB",
+      "Export" : {
+        "Name" : { "Fn::If":
+          [
+            "IsExternal",
+            { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebALBName" },
+            { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebALBNameInternal" }
+          ]
+        }
+      }
+    },
+    "WebALBHttpListener" : {
+      "Value": { "Ref":"WebALBHttpListener"},
+      "Description": "Listener for HTTP",
+      "Export" : {
+        "Name" : { "Fn::If":
+          [
+            "IsExternal",
+            { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebALBHttpListener" },
+            { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebALBHttpListenerInternal" }
+          ]
+        }
+      }
+    },
+    "WebALBHttpsListener" : {
+      "Value": { "Ref":"WebALBHttpsListener"},
+      "Description": "Listener for HTTPS",
+      "Export" : {
+        "Name" : { "Fn::If":
+          [
+            "IsExternal",
+            { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebALBHttpsListener" },
+            { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebALBHttpsListenerInternal" }
+          ]
+        }
+      }
+    },
+    "WebALBDomain": {
+      "Value": { "Fn::GetAtt": ["WebALB", "DNSName" ]},
+      "Description": "Web ALB Domain",
+      "Export" : {
+        "Name" : { "Fn::If":
+          [
+            "IsExternal",
+            { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebALBDomain" },
+            { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebALBDomainInternal" }
+          ]
+        }
+      }
+    },
+    "WebALBZone": {
+      "Value": { "Fn::GetAtt": ["WebALB", "CanonicalHostedZoneID" ]},
+      "Description": "Web ALB Zone",
+      "Export" : {
+        "Name" : { "Fn::If":
+          [
+            "IsExternal",
+            { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebALBZone" },
+            { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebALBZoneInternal" }
+          ]
+        }
+      }
+    },
+    "WebTargetGroup": {
+      "Value": { "Ref" : "WebTargetGroup" },
+      "Description": "Web Target Group",
+      "Export" : {
+        "Name" : { "Fn::If":
+          [
+            "IsExternal",
+            { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebTargetGroup" },
+            { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebTargetGroupInternal" }
+          ]
+        }
+      }
+    }
+  }
+}

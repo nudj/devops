@@ -1,0 +1,14 @@
+[
+  {
+    "ParameterKey": "VPCStackName",
+    "ParameterValue": "core-vpc"
+  },
+  {
+    "ParameterKey": "EnvironmentType",
+    "ParameterValue": "prod"
+  },
+  {
+    "ParameterKey": "WhiteListIPs",
+    "ParameterValue": "false"
+  }
+]

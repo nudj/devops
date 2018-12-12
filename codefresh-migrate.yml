@@ -1,0 +1,8 @@
+version: '1.0'
+
+steps:
+
+  migrate:
+    image: fdearle/sol-tools:0.0.10
+    commands:
+      - ./src/scripts/execute-remote.sh -p core-vpc-${{ENVIRONMENT}}-migrate

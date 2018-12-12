@@ -1,0 +1,26 @@
+[
+  {
+    "ParameterKey": "VPCStackName",
+    "ParameterValue": "core-vpc"
+  },
+  {
+    "ParameterKey": "EnvironmentType",
+    "ParameterValue": "staging"
+  },
+  {
+    "ParameterKey": "DatabaseUsername",
+    "ParameterValue": "{{resolve:ssm:staging-db-user:1}}"
+  },
+  {
+    "ParameterKey": "DatabasePassword",
+    "ParameterValue": "{{resolve:ssm-secure:staging-db-pass-secure:1}}"
+  },
+  {
+    "ParameterKey": "MultiAZ",
+    "ParameterValue": "false"
+  },
+  {
+    "ParameterKey": "DatabaseName",
+    "ParameterValue": "nudj"
+  }
+]

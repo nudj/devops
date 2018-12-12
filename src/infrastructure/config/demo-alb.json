@@ -1,0 +1,18 @@
+[
+  {
+    "ParameterKey": "VPCStackName",
+    "ParameterValue": "core-vpc"
+  },
+  {
+    "ParameterKey": "EnvironmentType",
+    "ParameterValue": "demo"
+  },
+  {
+    "ParameterKey": "UseHTTPS",
+    "ParameterValue": "true"
+  },
+  {
+    "ParameterKey": "CertificateArn",
+    "ParameterValue": "arn:aws:acm:eu-west-1:470250561590:certificate/dc6a2141-fddb-44c2-a1be-b50fceecc28f"
+  }
+]

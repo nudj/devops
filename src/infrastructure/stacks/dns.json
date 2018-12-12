@@ -1,0 +1,81 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Parameters": {
+    "VPCStackName": {
+      "Description": "The name of the target VPC stack to deploy this ELB into",
+      "Type": "String"
+    },
+    "EnvironmentType": {
+      "Description": "Name of the environment to build : demo, development, staging performance or production",
+      "Type": "String",
+      "Default": "perf",
+      "AllowedValues": [
+        "staging", "prod", "test", "demo", "perf", "feat1", "feat2", "feat3", "feat4", "feat5", "feat6"
+      ]
+    },
+    "ServiceName": {
+      "Description": "The name of the ECS Service to create",
+      "Type": "String"
+    },
+    "HostedZoneName": {
+      "AllowedPattern": ".*\\.",
+      "Description": "Domain to use with trailing dot (e.g. '.stackolater.com.')",
+      "Type": "String"
+    },
+    "HostedZoneID": {
+      "Description": "The ID of the HostedZone",
+      "Type": "String"
+    },
+    "DomainName": {
+      "Description": "The Full DNS Name for new entry",
+      "Type": "String"
+    },
+    "External": {
+      "AllowedValues": [
+        "true", "false"
+      ],
+      "Default": "true",
+      "Type": "String",
+      "Description": "Is this an internaet facing or internal ALB"
+    },
+  },
+  "Conditions": {
+    "IsExternal" : {
+        "Fn::Equals" : [ {"Ref" : "External"}, "true" ]
+    }
+  },
+  "Resources": {
+    "RecordSetGroup": {
+      "Properties": {
+        "HostedZoneName": {
+          "Ref": "HostedZoneName"
+        },
+        "RecordSets": [
+          {
+            "Name": {
+              "Ref": "DomainName"
+            },
+            "AliasTarget": {
+              "DNSName": { "Fn::If":
+                [
+                  "IsExternal",
+                  { "Fn::ImportValue": { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebALBDomain" }},
+                  { "Fn::ImportValue": { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebALBDomainInternal" }}
+                ]
+              },
+              "HostedZoneId":{ "Fn::If":
+                [
+                  "IsExternal",
+                  { "Fn::ImportValue": { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebALBZone" }},
+                  { "Fn::ImportValue": { "Fn::Sub": "${VPCStackName}-${EnvironmentType}-WebALBZoneInternal" }}
+                ]
+              },
+            },
+            "Type": "A"
+          }
+        ]
+      },
+      "Type": "AWS::Route53::RecordSetGroup"
+    }
+  }
+}
