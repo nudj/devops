@@ -216,7 +216,7 @@ async function action ({ db, sql }) {
   await promiseSerial(map(slugMaps[TABLES.REFERRALS], (slug, _key) => async () => {
     await sql(TABLES.REFERRAL_KEY_TO_SLUG_MAP).insert({
       [FIELDS[TABLES.REFERRAL_KEY_TO_SLUG_MAP].REFERRAL_KEY]: _key,
-      [FIELDS[TABLES.REFERRAL_KEY_TO_SLUG_MAP].JOB_SLUG]: slug
+      [FIELDS[TABLES.REFERRAL_KEY_TO_SLUG_MAP].SLUG]: slug
     })
   }))
 }
