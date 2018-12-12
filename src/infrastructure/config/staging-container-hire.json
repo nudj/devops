@@ -17,7 +17,7 @@
   },
   {
     "ParameterKey": "ImageUrl",
-    "ParameterValue": "470250561590.dkr.ecr.eu-west-1.amazonaws.com/nudj/hire:0.0.0-build7"
+    "ParameterValue": "470250561590.dkr.ecr.eu-west-1.amazonaws.com/nudj/hire:19.0.2.1-staging"
   },
   {
     "ParameterKey": "ServiceName",
