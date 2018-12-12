@@ -3,6 +3,6 @@ version: '1.0'
 steps:
 
   evacuate:
-    image: fdearle/sol-tools:0.0.10
+    image: fdearle/sol-tools:0.0.14
     commands:
       - ./src/scripts/execute-remote.sh -p core-vpc-${{ENVIRONMENT}}-evacuate

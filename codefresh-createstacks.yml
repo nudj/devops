@@ -3,7 +3,7 @@ version: '1.0'
 steps:
 
   create_stacks:
-    image: fdearle/sol-tools:0.0.10
+    image: fdearle/sol-tools:0.0.14
     working_directory: IMAGE_WORK_DIR
     description: Create the nudj stack
     commands:
