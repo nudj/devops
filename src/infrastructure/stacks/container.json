@@ -298,5 +298,22 @@
         }
       }
     }
+  },
+  "Outputs" : {
+    "ServiceLoadBalancerRule" : {
+      "Value": { "Ref":"ServiceLoadBalancerRule"},
+      "Description": "Listener rule for service",
+      "Export" : {
+          "Name" : { "Fn::Sub": "${AWS::StackName}-ServiceLoadBalancerRule" }
+      }
+    },
+    "SecondaryLoadBalancerRule" : {
+      "Condition": "HasSecondaryRule",
+      "Value": { "Ref":"SecondaryLoadBalancerRule"},
+      "Description": "Secondary Listener rule for service",
+      "Export" : {
+          "Name" : { "Fn::Sub": "${AWS::StackName}-SecondaryLoadBalancerRule" }
+      }
+    },
   }
 }
