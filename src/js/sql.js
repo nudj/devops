@@ -194,7 +194,8 @@ const FIELDS = {
     INTRO_DESCRIPTION: 'introDescription',
     OUTRO_TITLE: 'outroTitle',
     OUTRO_DESCRIPTION: 'outroDescription',
-    SURVEY_QUESTIONS: 'surveyQuestions'
+    SURVEY_QUESTIONS: 'surveyQuestions',
+    STATUS: 'status'
   },
   [TABLES.SURVEY_ANSWERS]: {
     PERSON: 'person',
@@ -252,7 +253,8 @@ const ENUMS = {
   ACCOUNT_TYPES: createEnumDefinition(['GOOGLE', 'OTHER']),
   QUESTION_TYPES: createEnumDefinition(['CONNECTIONS', 'COMPANIES']),
   TAG_TYPES: createEnumDefinition(['EXPERTISE', 'SENIORITY']),
-  COMPANY_INTEGRATION_TYPES: createEnumDefinition(['GREENHOUSE', 'OTHER'])
+  COMPANY_INTEGRATION_TYPES: createEnumDefinition(['GREENHOUSE', 'OTHER']),
+  SURVEY_STATUS_TYPES: createEnumDefinition(['DRAFT', 'PUBLISHED', 'ARCHIVED'])
 }
 const INDICES = merge(
   reduce(TABLES, (indexes, tableName) => {
