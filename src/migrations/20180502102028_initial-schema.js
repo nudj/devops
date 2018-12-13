@@ -294,6 +294,7 @@ exports.up = async knex => {
     .createTable(TABLES.SURVEYS, table => {
       const {
         SLUG,
+        COMPANY,
         INTRO_TITLE,
         INTRO_DESCRIPTION,
         OUTRO_TITLE,
@@ -305,13 +306,14 @@ exports.up = async knex => {
       defaultConfig(table, knex)
       defaultFields(table, knex)
       table.string(SLUG).notNullable()
+      relationType(COMPANY, TABLES.COMPANIES, table, knex).notNullable()
       table.string(INTRO_TITLE).notNullable()
       table.text(INTRO_DESCRIPTION).notNullable()
       table.string(OUTRO_TITLE).nullable()
       table.text(OUTRO_DESCRIPTION).nullable()
       table.json(SURVEY_QUESTIONS).notNullable().comment('Array of surveyQuestion ids denoting their order')
       table.enum(STATUS, ENUMS.SURVEY_STATUS_TYPES.values).defaultTo(ENUMS.SURVEY_STATUS_TYPES.DRAFT).notNullable()
-      table.unique(SLUG, INDICES[TABLES.SURVEYS][SLUG].name)
+      table.unique([COMPANY, SLUG], INDICES[TABLES.SURVEYS][[COMPANY, SLUG].join('')].name)
     })
 
     .createTable(TABLES.SURVEY_QUESTIONS, table => {
@@ -359,19 +361,6 @@ exports.up = async knex => {
       relationType(SURVEY_ANSWER, TABLES.SURVEY_ANSWERS, table, knex).notNullable()
       relationType(CONNECTION, TABLES.CONNECTIONS, table, knex).notNullable()
       table.unique([CONNECTION, SURVEY_ANSWER], INDICES[TABLES.SURVEY_ANSWER_CONNECTIONS][[CONNECTION, SURVEY_ANSWER].join('')].name)
-    })
-
-    .createTable(TABLES.COMPANY_SURVEYS, table => {
-      const {
-        COMPANY,
-        SURVEY
-      } = FIELDS[TABLES.COMPANY_SURVEYS]
-
-      defaultConfig(table, knex)
-      defaultFields(table, knex)
-      relationType(COMPANY, TABLES.COMPANIES, table, knex).notNullable()
-      relationType(SURVEY, TABLES.SURVEYS, table, knex).notNullable()
-      table.unique([COMPANY, SURVEY], INDICES[TABLES.COMPANY_SURVEYS][[COMPANY, SURVEY].join('')].name)
     })
 
     .createTable(TABLES.TAGS, table => {
@@ -573,7 +562,6 @@ exports.down = async knex => {
     .dropTable(TABLES.SURVEY_ANSWER_CONNECTIONS)
     .dropTable(TABLES.SURVEY_ANSWERS)
     .dropTable(TABLES.SURVEY_QUESTIONS)
-    .dropTable(TABLES.COMPANY_SURVEYS)
     .dropTable(TABLES.SURVEYS)
     .dropTable(TABLES.CONVERSATIONS)
     .dropTable(TABLES.ACCOUNTS)
