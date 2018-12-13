@@ -10,7 +10,6 @@ const TABLES = {
   ACCOUNTS: 'accounts',
   APPLICATIONS: 'applications',
   COMPANIES: 'companies',
-  COMPANY_SURVEYS: 'companySurveys',
   COMPANY_INTEGRATIONS: 'companyIntegrations',
   CONNECTIONS: 'connections',
   CONVERSATIONS: 'conversations',
@@ -191,6 +190,7 @@ const FIELDS = {
   },
   [TABLES.SURVEYS]: {
     SLUG: 'slug',
+    COMPANY: 'company',
     INTRO_TITLE: 'introTitle',
     INTRO_DESCRIPTION: 'introDescription',
     OUTRO_TITLE: 'outroTitle',
@@ -218,10 +218,6 @@ const FIELDS = {
     SOURCE: 'source',
     SURVEY_QUESTION: 'surveyQuestion',
     TAG: 'tag'
-  },
-  [TABLES.COMPANY_SURVEYS]: {
-    COMPANY: 'company',
-    SURVEY: 'survey'
   },
   [TABLES.TAGS]: {
     NAME: 'name',
@@ -366,9 +362,9 @@ const INDICES = merge(
       }
     },
     [TABLES.SURVEYS]: {
-      [F.SURVEYS.SLUG]: {
-        name: `${TABLES.SURVEYS}BySlug`,
-        fields: [F.SURVEYS.SLUG]
+      [F.SURVEYS.COMPANY + F.SURVEYS.SLUG]: {
+        name: `${TABLES.SURVEYS}ByCompanySlug`,
+        fields: [F.SURVEYS.COMPANY, F.SURVEYS.SLUG]
       }
     },
     [TABLES.SURVEY_QUESTIONS]: {
@@ -387,12 +383,6 @@ const INDICES = merge(
       [F.SURVEY_ANSWER_CONNECTIONS.CONNECTION + F.SURVEY_ANSWER_CONNECTIONS.SURVEY_ANSWER]: {
         name: `${TABLES.SURVEY_ANSWER_CONNECTIONS}ByConnectionSurveyAnswer`,
         fields: [F.SURVEY_ANSWER_CONNECTIONS.CONNECTION, F.SURVEY_ANSWER_CONNECTIONS.SURVEY_ANSWER]
-      }
-    },
-    [TABLES.COMPANY_SURVEYS]: {
-      [F.COMPANY_SURVEYS.COMPANY + F.COMPANY_SURVEYS.SURVEY]: {
-        name: `${TABLES.COMPANY_SURVEYS}ByCompanySurvey`,
-        fields: [F.COMPANY_SURVEYS.COMPANY, F.COMPANY_SURVEYS.SURVEY]
       }
     },
     [TABLES.TAGS]: {
