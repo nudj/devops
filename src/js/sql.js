@@ -119,7 +119,8 @@ const FIELDS = {
     JOB: 'job',
     PERSON: 'person',
     CANDIDATE: 'candidate',
-    NOTES: 'notes'
+    NOTES: 'notes',
+    CONSENT: 'consent'
   },
   [TABLES.JOBS]: {
     TITLE: 'title',

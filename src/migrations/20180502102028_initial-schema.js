@@ -513,7 +513,8 @@ exports.up = async knex => {
         JOB,
         PERSON,
         CANDIDATE,
-        NOTES
+        NOTES,
+        CONSENT
       } = FIELDS[TABLES.INTROS]
 
       defaultConfig(table, knex)
@@ -522,6 +523,7 @@ exports.up = async knex => {
       relationType(PERSON, TABLES.PEOPLE, table, knex).notNullable()
       relationType(CANDIDATE, TABLES.PEOPLE, table, knex).notNullable()
       table.text(NOTES).notNullable()
+      table.boolean(CONSENT).defaultTo(false).notNullable()
     })
 
     .createTable(TABLES.COMPANY_INTEGRATIONS, table => {
