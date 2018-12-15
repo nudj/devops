@@ -9,14 +9,14 @@
   },
   {
     "ParameterKey": "WhiteListIPs",
-    "ParameterValue": "true"
+    "ParameterValue": "false"
   },
   {
     "ParameterKey": "IPWhiteList1",
-    "ParameterValue": "109.231.193.164/32"
+    "ParameterValue": "x.x.x.x/32"
   },
   {
     "ParameterKey": "IPWhiteList2",
-    "ParameterValue": "185.44.76.119/32"
+    "ParameterValue": "x.x.x.x/32"
   }
 ]
