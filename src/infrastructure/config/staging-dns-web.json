@@ -21,6 +21,6 @@
   },
   {
     "ParameterKey": "DomainName",
-    "ParameterValue": "web.staging.aws.nudj.co."
+    "ParameterValue": "web.staging.nudj.co."
   }
 ]
