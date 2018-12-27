@@ -1,7 +1,7 @@
 "Environment": [
   {
     "Name": "ENVKEY",
-    "Value": "{{resolve:ssm:staging-admin-envkey:1}}"
+    "Value": "{{resolve:ssm:staging-admin-envkey:2}}"
   },
   {
     "Name": "REDIS_HOST",
