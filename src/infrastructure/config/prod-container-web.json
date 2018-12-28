@@ -37,7 +37,7 @@
   },
   {
     "ParameterKey": "ListenerRuleValue",
-    "ParameterValue": "web.aws.nudj.co"
+    "ParameterValue": "nudj.co"
   },
   {
     "ParameterKey": "ListenerRulePriority",
@@ -53,7 +53,7 @@
   },
   {
     "ParameterKey": "SecondaryListenerRuleValue",
-    "ParameterValue": "web-beta.aws.nudj.co"
+    "ParameterValue": "web-beta.nudj.co"
   },
   {
     "ParameterKey": "SecondaryListenerRulePriority",
