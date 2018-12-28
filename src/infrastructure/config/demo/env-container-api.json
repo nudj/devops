@@ -1,7 +1,7 @@
 "Environment": [
   {
     "Name": "ENVKEY",
-    "Value": "{{resolve:ssm:demo-api-envkey:1}}"
+    "Value": "{{resolve:ssm:demo-api-envkey:2}}"
   },
   {
     "Name": "SQL_HOST",

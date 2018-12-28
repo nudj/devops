@@ -1,7 +1,7 @@
 "Environment": [
   {
     "Name": "ENVKEY",
-    "Value": "{{resolve:ssm:demo-hire-envkey:1}}"
+    "Value": "{{resolve:ssm:demo-hire-envkey:2}}"
   },
   {
     "Name": "REDIS_HOST",
