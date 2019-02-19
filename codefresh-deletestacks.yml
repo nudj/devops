@@ -10,5 +10,6 @@ steps:
       - sol layer destroy -l tools -e ${{ENVIRONMENT}}
       - sol layer destroy -l service -e ${{ENVIRONMENT}}
       - sol layer destroy -l db -e ${{ENVIRONMENT}}
+      - sol layer destroy -l dns -e ${{ENVIRONMENT}}
       - sol layer destroy -l env -e ${{ENVIRONMENT}}
       - sol layer destroy -l core
